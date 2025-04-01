@@ -1,12 +1,18 @@
 import { useState, useContext } from 'react'
-import viteLogo from '/vite.svg'
 import './styles/App.css'
-import Dashboard from './components/Dashboard.jsx'
+import Dashboard from './components/Dashboard.jsx';
+import LoginRegistration from './components/LoginRegistration.jsx';
 
 function App() {
+  const [ loginStatus, setLoginStatus ] = useState(sessionStorage.getItem("loginStatus") || "false");
+  {console.log(loginStatus)}
+  const updateLoginStatus = (newLoginStatus) => {
+    sessionStorage.setItem('loginStatus', newLoginStatus)
+    setLoginStatus(newLoginStatus);
+  }
   return (
     <>
-      <Dashboard/>
+      {((JSON.parse(loginStatus)) ? <Dashboard/> : <LoginRegistration setLogin={() => updateLoginStatus(true)}/>)}
     </>
   )
 }
