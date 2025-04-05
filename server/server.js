@@ -35,6 +35,20 @@ db.connect((err) => {
     }
 });
 
+/**
+ * Decodes and verifies a JSON web token based on the secret key
+ * @param {*} token unvalidated token string received within the HTTP request header
+ * @returns If valid, returns the payload of the JWT. If invalid, returns null
+ */
+function validateJWT(token) {
+    try {
+        payload = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) { // invalid JWT credentials
+        return null;
+    }
+    return payload;
+}
+
 // API Endpoints
 
 // User Login Verification
@@ -59,7 +73,6 @@ app.post("/login", async (req, res) => {
                     {
                         userId: result[0]['user_id'],
                         userEmail: email,
-                        userPsw: password
                     }, 
                     process.env.JWT_SECRET,
                     {expiresIn: '6h'}
@@ -99,6 +112,57 @@ app.post("/register", async (req, res) => {
     });
 
 });
+
+// get transactions - requires credentials
+app.get('/transactions', async (req, res) => {
+    console.log("Transactions endpoint accessed!");
+    
+    // get & verify JWT
+    token = req.get('cookie').split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log("Invalid JWT in request!");
+        return res.status(401).json({message: "Invalid credentials!"});
+    }
+
+    // get transactions for the user
+    db.query("select * from transactions where user_id = ?", [payload.userId], (err, data) => {
+        if (err) {
+            console.log("Error retrieving transactions from database.")
+            return res.status(500).json({message: "Error retrieving transactions from database"});
+        } else {
+            return res.status(200).json({message: "Successfully retrieved transactions", data: data});
+        }
+    });
+});
+
+// get transaction categories - requires credentials
+app.get('/categories', async (req,res) => {
+    console.log("Categories endpoint accessed!");
+
+    // get & verify JWT
+    token = req.get('cookie').split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log("Invalid JWT in request!");
+        return res.status(401).json({message: "Invalid credentials!"});
+    }
+
+    // get sections for the user
+    db.query('select * from categories where user_id = ?', [payload.userId], (err, data) => {
+        if (err) {
+            console.log("Error retrieving categories!");
+            return res.status(500).json({message: "Error retrieving categories from database"});
+        } else {
+            console.log(data)
+            return res.status(200).json({message: "Successfully retrieved categories", data: data});
+        }
+    });
+});
+
+
+
+
 
 
 // Start Server
