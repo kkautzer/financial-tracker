@@ -126,7 +126,7 @@ app.get('/transactions', async (req, res) => {
     }
 
     // get transactions for the user
-    db.query("select * from transactions where user_id = ?", [payload.userId], (err, data) => {
+    db.query("select * from transactions where user_id = ? order by transaction_date desc", [payload.userId], (err, data) => {
         if (err) {
             console.log("Error retrieving transactions from database.")
             return res.status(500).json({message: "Error retrieving transactions from database"});

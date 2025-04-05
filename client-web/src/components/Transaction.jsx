@@ -1,4 +1,4 @@
-export default function DashboardSingleTransactionRecap(props) {
+export default function Transaction(props) {
     /**
      * Contains the following props attributes:
      * name - the name assigned to the transaction (i.e. Groceries, Tuition Payment, etc.)
@@ -10,25 +10,25 @@ export default function DashboardSingleTransactionRecap(props) {
      */
     if (props.expense) {
         return <>
-        <p style={{marginLeft:'1rem'}} className='text-xl'>
+        <p className='text-lg ml-4'>
             {props.name + ": "}
             <span style={{color:"red"}}>{"$"+props.amount.toFixed(2)}</span>
             {", $"+props.pBalance.toFixed(2)}&nbsp;&rarr;&nbsp;
             {<span style={{color:"red"}}>{"$"+((props.pBalance-props.amount).toFixed(2))}</span>}
         </p>
-        <p style={{marginLeft:"2rem",color:'grey'}}>
+        <p className='ml-8 text-gray-500'>
             {props.date + " | " + props.category + " | " + props.frequency}
         </p>
     </>
     } else {
         return <>
-        <p style={{marginLeft:'1rem'}} className='text-xl'>
+        <p className='text-lg ml-4'>
             {props.name + ": "}
             <span style={{color: "green"}}>{"$"+props.amount.toFixed(2)}</span>
             {", $"+props.pBalance.toFixed(2)}&nbsp;&rarr;&nbsp;
             {<span style={{color:'green'}}>{"$"+(props.pBalance+props.amount).toFixed(2)}</span>}
         </p>
-        <p style={{marginLeft:"2rem",color:'grey'}}>
+        <p className='ml-8 text-gray-500'>
             {props.date + " | " + props.category + " | " + props.frequency}
         </p>
 
