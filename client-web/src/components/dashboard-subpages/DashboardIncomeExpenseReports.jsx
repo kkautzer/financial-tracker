@@ -1,17 +1,18 @@
 import { useContext } from "react";
 import { PieChart, Pie, Cell, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
-// import { Chart } from 'react-apexcharts'
-import FinanceDataContext from "../contexts/FinanceDataContext";
+import FinanceDataContext from "../../contexts/FinanceDataContext";
+import PageContext from "../../contexts/PageContext";
+
 import CategorySummary from "./CategorySummary";
 
 export default function DashboardIncomeExpenseReports() {
 
     const financeDataContext = useContext(FinanceDataContext);
+    const setPage = useContext(PageContext);
 
     let categories = financeDataContext[0].categories;
     let transactions = financeDataContext[0].transactions;
     let categoryIdToAmt = {}; // map category id to total sum of transactions
-    let categoryIdtoQty = {};
 
     transactions.filter((trnsc) => { // filter within 30 days
         return Math.abs(Date.now() - new Date(trnsc['transaction_date']) ) < 30*24*60*60*1000
@@ -53,7 +54,6 @@ export default function DashboardIncomeExpenseReports() {
     const COLORS_EXPENSE = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
     
     return <div>
-        <h2 className='text-2xl md:text-3xl xl:text-4xl text-center'>Income & Expenses</h2>
         <div className='flex flex-col lg:flex-row mt-4'>
             <div className="lg:basis-1/2">
                 <PieChart className='mx-auto' width={225} height={225}>
@@ -69,7 +69,7 @@ export default function DashboardIncomeExpenseReports() {
                 {incomeData.map((data)=> {
                     return <CategorySummary key={data['id']} category={data['category']} amt={data['amt']} qty={data['qty']}/>
                 })}
-                <button className='ex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:cursor-pointer mt-3'>View Incomes</button>
+                <button onClick={() => setPage('incomes')} className='w-full text-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:cursor-pointer mt-3'>View Incomes</button>
             </div>
         </div>
 
@@ -88,7 +88,8 @@ export default function DashboardIncomeExpenseReports() {
                 {expenseData.map((data) => {
                     return <CategorySummary key={data['id']} category={data['category']} amt={data['amt']} qty={data['qty']} />
                 })}
-                <button className='ex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:cursor-pointer mt-3'>View Expenses</button>
+                
+                <button onClick={() => setPage('expenses')} className='w-full text-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:cursor-pointer mt-3'>View Expenses</button>
             </div>
         </div>
     </div>

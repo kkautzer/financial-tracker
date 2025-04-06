@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react'
 import Transaction from "./Transaction";
-import FinanceDataContext from '../contexts/FinanceDataContext';
+import FinanceDataContext from '../../contexts/FinanceDataContext';
+import PageContext from '../../contexts/PageContext';
 
 export default function DashboardTransactionRecap(props) {
     function date_stringify(date) {
@@ -22,6 +23,8 @@ export default function DashboardTransactionRecap(props) {
 
 
     const financeDataContext = useContext(FinanceDataContext);
+    const setPage = useContext(PageContext);
+
 
     let categories = financeDataContext[0].categories;
     let transactions = financeDataContext[0].transactions;
@@ -39,9 +42,7 @@ export default function DashboardTransactionRecap(props) {
     })
 
     return <div>
-        <h2 className='text-2xl md:text-3xl xl:text-4xl mb-3 text-center'>Transactions</h2>
-        {/* filter data from context based on the selected accounts */}
-        <h3 className='text-xl md:text-2xl xl:text-3xl'>Upcoming Transactions</h3>
+        <h3 className='text-xl xl:text-2xl'>Upcoming Transactions</h3>
 
         <div>
             {upcomingTransactions.length > 0 ? 
@@ -61,7 +62,7 @@ export default function DashboardTransactionRecap(props) {
             }
         </div>
 
-        <h3 className='mt-3 text-xl md:text-2xl xl:text-3xl'>Recent Transactions</h3>
+        <h3 className='mt-3 text-xl xl:text-2xl'>Recent Transactions</h3>
             {pastTransactions.length > 0 ? 
                 pastTransactions.map((trnsc) => {
                     return <Transaction key={trnsc['transaction_id']}
@@ -77,11 +78,7 @@ export default function DashboardTransactionRecap(props) {
             :
                 <p className='text-md ml-4 italic'>No Past Transactions!</p>
             }
-            
 
-
-
-        <button className='ex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:cursor-pointer mt-3'>View All Transactions</button>
-
+        <button onClick={() => setPage('transactions') } className='w-full text-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:cursor-pointer mt-3'>View All Transactions</button>
     </div>
 }
