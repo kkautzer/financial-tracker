@@ -1,8 +1,9 @@
 import { useState, useContext } from 'react'
 
-import './styles/App.css'
+import './index.css'
 import Wrapper from './components/Wrapper.jsx';
 import LoginRegistration from './components/LoginRegistration.jsx';
+import Dashboard from './components/Dashboard.jsx';
 
 function App() {
   const [ loginStatus, setLoginStatus ] = useState(sessionStorage.getItem("loginStatus") || "false");
@@ -12,7 +13,7 @@ function App() {
   }
   return (
     <>
-      {((JSON.parse(loginStatus)) ? <Wrapper/> : <LoginRegistration setLogin={() => updateLoginStatus(true)}/>)}
+      {((JSON.parse(loginStatus)) ? <Dashboard/> : <LoginRegistration setLogin={() => updateLoginStatus(true)}/>)}
       {/* {((JSON.parse(loginStatus)) ? <AllTransactions/> : <LoginRegistration setLogin={() => updateLoginStatus(true)}/>)} */}
     </>
   )

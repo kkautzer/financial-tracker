@@ -154,7 +154,6 @@ app.get('/categories', async (req,res) => {
             console.log("Error retrieving categories!");
             return res.status(500).json({message: "Error retrieving categories from database"});
         } else {
-            console.log(data)
             return res.status(200).json({message: "Successfully retrieved categories", data: data});
         }
     });
