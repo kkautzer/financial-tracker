@@ -2,7 +2,6 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts'
 import FinanceDataContext from '../contexts/FinanceDataContext';
 import PageContext from '../contexts/PageContext';
 import { useContext } from 'react';
-import Transaction from './dashboard-subpages/Transaction';
 
 export default function AllTransactions() {
     const setPage = useContext(PageContext);
@@ -60,29 +59,29 @@ export default function AllTransactions() {
             <div className='lg:basis-1/2'>
                 <h3 className='text-xl xl:text-2xl'>Past Transactions</h3><p>range selection</p>
                 {pastTransactions.slice().reverse().map((trnsc) => {
-                    return <Transaction key={trnsc['transaction_id']}
-                        name={trnsc['transaction_name']}
-                        expense={trnsc['transaction_is_expense'] > 0}
-                        amount={trnsc['transaction_amt']}
-                        pBalance={trnsc['transaction_pbalance']}
-                        date={(trnsc['transaction_date'])}
-                        frequency={trnsc['transaction_recurrence_period'] == -1 ? "One-time" : trnsc['transaction_recurrence_period']}
-                        category={categoryIdToName[trnsc['category_id']]}
-                    />
+                    // return <Transaction key={trnsc['transaction_id']}
+                    //     name={trnsc['transaction_name']}
+                    //     expense={trnsc['transaction_is_expense'] > 0}
+                    //     amount={trnsc['transaction_amt']}
+                    //     pBalance={trnsc['transaction_pbalance']}
+                    //     date={(trnsc['transaction_date'])}
+                    //     frequency={trnsc['transaction_recurrence_period'] == -1 ? "One-time" : trnsc['transaction_recurrence_period']}
+                    //     category={categoryIdToName[trnsc['category_id']]}
+                    // />
                 })}
             </div>
             <div className='lg:basis-1/2 mt-3 lg:mt-0'>
                 <h3 className='text-xl xl:text-2xl'>Upcoming Transactions</h3><p>range selection (max. 1yr.)</p>
                 {upcomingTransactions.map((trnsc) => {
-                    return <Transaction key={trnsc['transaction_id']}
-                        name={trnsc['transaction_name']}
-                        expense={trnsc['transaction_is_expense'] > 0}
-                        amount={trnsc['transaction_amt']}
-                        pBalance={trnsc['transaction_pbalance']}
-                        date={(trnsc['transaction_date'])}
-                        frequency={trnsc['transaction_recurrence_period'] == -1 ? "One-time" : trnsc['transaction_recurrence_period']}
-                        category={categoryIdToName[trnsc['category_id']]}
-                    />
+                    // return <Transaction key={trnsc['transaction_id']}
+                    //     name={trnsc['transaction_name']}
+                    //     expense={trnsc['transaction_is_expense'] > 0}
+                    //     amount={trnsc['transaction_amt']}
+                    //     pBalance={trnsc['transaction_pbalance']}
+                    //     date={(trnsc['transaction_date'])}
+                    //     frequency={trnsc['transaction_recurrence_period'] == -1 ? "One-time" : trnsc['transaction_recurrence_period']}
+                    //     category={categoryIdToName[trnsc['category_id']]}
+                    // />
                 })}
             </div>
         </div>
