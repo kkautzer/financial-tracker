@@ -51,6 +51,31 @@ function validateJWT(token) {
 
 // API Endpoints
 
+// User Account Creation
+app.post("/register", async (req, res) => {
+    console.log("Registration Endpoint Accessed");
+    const {email, password } = req.body;
+
+    const hashed = await bcrypt.hash(password, 10);
+    db.query("select * from users where user_email = ?", [email], (err, result) => {
+        if (err) {
+            console.log(err)
+            return res.status(500).json({message: "Failed to create account - an unknown server error occurred"});
+        } else if (result.length > 0) { // account with this email already exists
+            return res.status(409).json({message: "Account with this email already exists"});
+        }
+        db.query("insert into users (user_email, user_psw) values (?, ?)", [email, hashed], (err, result) => {
+            if (err) {
+                console.log(err)
+                return res.status(500).json({message: "Failed to create account - an unknown server error occurred"});
+            } else { // successfully created the account
+                return res.status(201).json({message: "Successfully created account", email: email});
+            }
+        });
+    });
+
+});
+
 // User Login Verification
 app.post("/login", async (req, res) => {
     console.log("Login Endpoint Accessed");
@@ -88,29 +113,24 @@ app.post("/login", async (req, res) => {
     });
 });
 
-// User Account Creation
-app.post("/register", async (req, res) => {
-    console.log("Registration Endpoint Accessed");
-    const {email, password } = req.body;
-
-    const hashed = await bcrypt.hash(password, 10);
-    db.query("select * from users where user_email = ?", [email], (err, result) => {
-        if (err) {
-            console.log(err)
-            return res.status(500).json({message: "Failed to create account - an unknown server error occurred"});
-        } else if (result.length > 0) { // account with this email already exists
-            return res.status(409).json({message: "Account with this email already exists"});
-        }
-        db.query("insert into users (user_email, user_psw) values (?, ?)", [email, hashed], (err, result) => {
-            if (err) {
-                console.log(err)
-                return res.status(500).json({message: "Failed to create account - an unknown server error occurred"});
-            } else { // successfully created the account
-                return res.status(201).json({message: "Successfully created account", email: email});
-            }
+// User Logout Functionality
+app.post('/logout', async (req, res) => {
+    
+    // get & verify JWT
+    token = req.get('cookie').split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log("Invalid JWT in request!");
+        return res.status(401).json({message: "Invalid credentials!"});
+    } else {
+        console.log("User ID="+payload['userId']+" has signed out!");
+        res.cookie('fintracker_auth', '', { // set jwt auth to empty, effectively destroy it
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict'
         });
-    });
-
+        res.status(200).json({message: "Successfully Logged Out"})
+    }
 });
 
 // get transactions - requires credentials

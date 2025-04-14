@@ -1,10 +1,19 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router';
 
 export default function Login(props) {
     const navigate = useNavigate();
     const emailRef = useRef('');
     const passRef = useRef('');
+
+    const loginStatus = sessionStorage.getItem('login') || 'false';
+    if (loginStatus === 'true') {
+        useEffect(() => {
+            navigate('/app/dashboard');
+        }, [loginStatus])
+    }
+
+
 
     function attemptLogin(e) {
         e.preventDefault();

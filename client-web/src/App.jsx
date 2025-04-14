@@ -27,11 +27,11 @@ function App() {
       <Route path='logout' element={<Logout/>} />
       <Route path='*' element={<PageNotFound/>} />
     </Route>
-    <Route path='auth?' element={<LoginContainer />}>
+    <Route path='/' element={<LoginContainer />}>
       <Route path='home?' index element={<Home/>} />
       <Route path='about' element={<About/>} />
-      <Route path='login' element={<Login/>}/>
-      <Route path='register' element={<Register/>}/>
+      <Route path='auth?/login' element={<Login/>}/>
+      <Route path='auth?/register' element={<Register/>}/>
     </Route>
     <Route path='*' element={<PageNotFound />} />
   </Routes>
