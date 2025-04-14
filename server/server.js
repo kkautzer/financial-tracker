@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-// const serverless = require('serverless');
+const  serverless = require('serverless-http');
 
 require('dotenv').config();
 
@@ -16,7 +16,7 @@ app.use(cors({
 }));
 
 
-const PORT = process.env.PORT; // port that this server will listen on - make API endpoint requests to this port
+// const PORT = process.env.PORT; // port that this server will listen on - make API endpoint requests to this port
 const dbHost = process.env.HOST;
 const dbUser = process.env.USER;
 const dbPass = process.env.PASSW;
@@ -53,7 +53,9 @@ function validateJWT(token) {
 }
 
 // API Endpoints
-
+app.get('/', (req, res) => {
+    res.send("Hello world!");
+})
 // User Account Creation
 app.post("/register", async (req, res) => {
     console.log("Registration Endpoint Accessed");
@@ -120,7 +122,7 @@ app.post("/login", async (req, res) => {
 app.post('/logout', async (req, res) => {
     
     // get & verify JWT
-    token = req.get('cookie').split('=')[1];
+    token = req.get('cookie')?.split('=')[1];
     payload = validateJWT(token);
     if (payload == null) {
         console.log("Invalid JWT in request!");
@@ -187,7 +189,9 @@ app.get('/categories', async (req,res) => {
 
 
 
-// Start Server
-app.listen(PORT, () => {
-    console.log(`Server Running on Port ${PORT}`);
-});
+// // // Start Server
+// // app.listen(PORT, () => {
+// //     console.log(`Server Running on Port ${PORT}`);
+// // });
+
+module.exports.handler = serverless(app);
