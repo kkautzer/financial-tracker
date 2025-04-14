@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router"
-import Navbar from "./NavbarUnauthorized";
+import Navbar from "../nav/NavbarUnauthorized";
 
 export default function LoginContainer(props) {
     const navigate = useNavigate();

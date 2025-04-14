@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router';
 import './index.css'
 
 import AuthorizedContainer from './components/app/AuthorizedContainer.jsx'
-import LoginContainer from './components/gen/UnauthorizedContainer.jsx';
+import LoginContainer from './components/public/UnauthorizedContainer.jsx';
 import Dashboard from './components/app/Dashboard.jsx';
 import Transactions from './components/app/Transactions.jsx';
 import Login from './components/auth/Login.jsx';
@@ -12,8 +12,8 @@ import Profile from './components/app/Profile.jsx';
 import Settings from './components/app/Settings.jsx';
 import Logout from './components/auth/Logout.jsx';
 import PageNotFound from './components/PageNotFound.jsx';
-import Home from './components/gen/Home.jsx';
-import About from './components/gen/About.jsx';
+import Home from './components/public/Home.jsx';
+import About from './components/public/About.jsx';
 
 
 function App() {
