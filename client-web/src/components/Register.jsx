@@ -1,6 +1,8 @@
 import { useRef } from 'react';
+import { NavLink, useNavigate } from 'react-router';
 export default function Register(props) {
-
+    const navigate = useNavigate();
+    
     const emailRef = useRef('');
     const passRef = useRef('');
     const cPassRef = useRef('');
@@ -51,7 +53,9 @@ export default function Register(props) {
                     if (status === 200) {
                         // set user login data
                         console.log(response.message);
-                        props.setLogin();
+                        sessionStorage.setItem('login', true);
+                        navigate('/app');
+
                     } else {
                         console.error("Error " + status + " -- " + response.message);
                     }
@@ -121,9 +125,9 @@ export default function Register(props) {
 
                 <p className="mt-10 text-center text-sm/6 text-gray-500">
                     Already have an account?{' '}
-                    <a onClick={(e) => {e.preventDefault();props.showLoginForm()}} className="font-semibold text-indigo-600 hover:text-indigo-500 hover:cursor-pointer">
+                    <NavLink to='/auth/login' className="font-semibold text-indigo-600 hover:text-indigo-500 hover:cursor-pointer">
                     Log In
-                    </a>
+                    </NavLink>
                 </p>
             </div>
         </div>

@@ -28,7 +28,6 @@ export default function Dashboard(props) {
     const pieColors = ["#6366f1", "#ec4899", "#10b981", "#f59e0b", "#3b82f6", "#ef4444", "#14b8a6", "#8b5cf6", "#f97316", "#22c55e"];
 
     return <div className=''>
-        <Navbar />
         <div className='my-4 mx-15'>
             <div className='text-xl flex align-middle'>
                 <div className='basis-1/4 text-center'><button className='btn btn-primary'>Previous</button></div>

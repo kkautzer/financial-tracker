@@ -1,22 +1,25 @@
 import { useState, useContext } from 'react'
-
+import { Outlet, useNavigate } from 'react-router';
 import './index.css'
-import Wrapper from './components/Wrapper.jsx';
-import LoginRegistration from './components/LoginRegistration.jsx';
 import Dashboard from './components/Dashboard.jsx';
+import Navbar from './components/Navbar.jsx';
 
 function App() {
-  const [ loginStatus, setLoginStatus ] = useState(sessionStorage.getItem("loginStatus") || "false");
-  const updateLoginStatus = (newLoginStatus) => {
-    sessionStorage.setItem('loginStatus', newLoginStatus)
-    setLoginStatus(newLoginStatus);
+  const navigate = useNavigate();
+  
+  const loginStatus = sessionStorage.getItem('login') || 'false';  
+
+  if (!loginStatus) {
+    navigate('/auth/login');
+  } else {
+    return (
+      <>
+        <Navbar/>
+        <Outlet/>
+      </>
+    )
   }
-  return (
-    <>
-      {((JSON.parse(loginStatus)) ? <Dashboard/> : <LoginRegistration setLogin={() => updateLoginStatus(true)}/>)}
-      {/* {((JSON.parse(loginStatus)) ? <AllTransactions/> : <LoginRegistration setLogin={() => updateLoginStatus(true)}/>)} */}
-    </>
-  )
+  
 }
 
 export default App
