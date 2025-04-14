@@ -4,14 +4,17 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+// const serverless = require('serverless');
+
 require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors({
-    origin: "http://localhost:5173", // may update to include only the location of the frontend client(s)
+    origin: ["http://localhost:5173", "https://master.d14d9ivj1e8k47.amplifyapp.com"], // may update to include only the location of the frontend client(s)
     credentials: true
 }));
+
 
 const PORT = process.env.PORT; // port that this server will listen on - make API endpoint requests to this port
 const dbHost = process.env.HOST;
