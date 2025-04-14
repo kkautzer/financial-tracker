@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const  serverless = require('serverless-http');
+// const  serverless = require('serverless-http');
 
 require('dotenv').config();
 
@@ -16,7 +16,7 @@ app.use(cors({
 }));
 
 
-// const PORT = process.env.PORT; // port that this server will listen on - make API endpoint requests to this port
+const PORT = process.env.PORT; // port that this server will listen on - make API endpoint requests to this port
 const dbHost = process.env.HOST;
 const dbUser = process.env.USER;
 const dbPass = process.env.PASSW;
@@ -189,9 +189,9 @@ app.get('/categories', async (req,res) => {
 
 
 
-// // // Start Server
-// // app.listen(PORT, () => {
-// //     console.log(`Server Running on Port ${PORT}`);
-// // });
+// Start Server
+app.listen(PORT, () => {
+    console.log(`Server Running on Port ${PORT}`);
+});
 
-module.exports.handler = serverless(app);
+// // module.exports.handler = serverless(app);
