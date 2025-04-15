@@ -13,7 +13,7 @@ dotenv.config();
 const app: express.Application = express();
 app.use(bodyParser.json());
 app.use(cors({
-    origin: ["http://localhost:5173", "https://master.d14d9ivj1e8k47.amplifyapp.com"], // may update to include only the location of the frontend client(s)
+    origin: ["https://master.d14d9ivj1e8k47.amplifyapp.com", "http://localhost:5173"],
     credentials: true
 }));
 
