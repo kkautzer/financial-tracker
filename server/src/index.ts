@@ -1,17 +1,19 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mysql = require('mysql2');
-const cors = require('cors');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-// const serverless = require('serverless');
+import express from 'express';
+import bodyParser from 'body-parser';
+import mysql from 'mysql2';
+import cors from 'cors';
+import bcrypt from 'bcrypt';
+import jsonwebtoken, { Jwt, JwtPayload } from 'jsonwebtoken';
+import dotenv from 'dotenv'
 
-require('dotenv').config();
+// const  serverless = require('serverless-http');
 
-const app = express();
+dotenv.config();
+
+const app: express.Application = express();
 app.use(bodyParser.json());
 app.use(cors({
-    origin: ["http://localhost:5173", "https://master.d14d9ivj1e8k47.amplifyapp.com"], // may update to include only the location of the frontend client(s)
+    origin: ["https://master.d14d9ivj1e8k47.amplifyapp.com", "http://localhost:5173"],
     credentials: true
 }));
 
@@ -38,24 +40,35 @@ db.connect((err) => {
     }
 });
 
+interface User {
+    user_id: any,
+    user_email: any,
+    user_psw: any,
+    user_initial_balance: any
+}
+
+const jwtSecret = process.env.JWT_SECRET!;
+
 /**
  * Decodes and verifies a JSON web token based on the secret key
  * @param {*} token unvalidated token string received within the HTTP request header
  * @returns If valid, returns the payload of the JWT. If invalid, returns null
  */
-function validateJWT(token) {
+function validateJWT(token: string) {
     try {
-        payload = jwt.verify(token, process.env.JWT_SECRET);
+        const payload = jsonwebtoken.verify(token, jwtSecret);
+        return payload;
     } catch (err) { // invalid JWT credentials
         return null;
     }
-    return payload;
 }
 
 // API Endpoints
-
+app.get('/', (req: express.Request, res: express.Response) => {
+    res.send("Hello world!");
+})
 // User Account Creation
-app.post("/register", async (req, res) => {
+app.post("/register", async (req: express.Request, res: express.Response) => {
     console.log("Registration Endpoint Accessed");
     const {email, password } = req.body;
 
@@ -64,7 +77,7 @@ app.post("/register", async (req, res) => {
         if (err) {
             console.log(err)
             return res.status(500).json({message: "Failed to create account - an unknown server error occurred"});
-        } else if (result.length > 0) { // account with this email already exists
+        } else if (Array.isArray(result) && result.length > 0) { // account with this email already exists
             return res.status(409).json({message: "Account with this email already exists"});
         }
         db.query("insert into users (user_email, user_psw) values (?, ?)", [email, hashed], (err, result) => {
@@ -80,16 +93,16 @@ app.post("/register", async (req, res) => {
 });
 
 // User Login Verification
-app.post("/login", async (req, res) => {
+app.post("/login", async (req: express.Request, res: express.Response) => {
     console.log("Login Endpoint Accessed");
     const { email, password } = req.body;
 
-    db.query("select * from users where user_email = ?", [email], async (err, result) => {
+    db.query("select * from users where user_email = ?", [email], async (err, result: any[]) => {
         if (err) {
             console.log(err);
             res.status(500).json({message:"Failed to log in - an unknown server error occurred"})
         } else {
-            if ( result.length  < 1) { // no accounts w/ given email
+            if ( Array.isArray(result) && result.length  < 1) { // no accounts w/ given email
                 return res.status(401).json({message: "No account associated with the given email"});
             } else if (!(await bcrypt.compare(password, result[0]['user_psw'])) ) { // password doesn't match
                 return res.status(401).json({message: "Incorrect password"});
@@ -97,12 +110,12 @@ app.post("/login", async (req, res) => {
                 // username & password are correct
                 console.log("User ID="+result[0]['user_id']+" has signed in!")
                 
-                const token = jwt.sign(
+                const token = jsonwebtoken.sign(
                     {
                         userId: result[0]['user_id'],
                         userEmail: email,
                     }, 
-                    process.env.JWT_SECRET,
+                    jwtSecret,
                     {expiresIn: '6h'}
                 );
                 res.cookie('fintracker_auth', token, {
@@ -117,11 +130,11 @@ app.post("/login", async (req, res) => {
 });
 
 // User Logout Functionality
-app.post('/logout', async (req, res) => {
+app.post('/logout', async (req: express.Request, res: express.Response,): Promise<any> => {
     
     // get & verify JWT
-    token = req.get('cookie').split('=')[1];
-    payload = validateJWT(token);
+    const token = req.get('cookie')?.split('=')[1] || '';
+    const payload = validateJWT(token) as JwtPayload;
     if (payload == null) {
         console.log("Invalid JWT in request!");
         return res.status(401).json({message: "Invalid credentials!"});
@@ -137,12 +150,12 @@ app.post('/logout', async (req, res) => {
 });
 
 // get transactions - requires credentials
-app.get('/transactions', async (req, res) => {
+app.get('/transactions', async (req: express.Request, res: express.Response): Promise<any> => {
     console.log("Transactions endpoint accessed!");
     
     // get & verify JWT
-    token = req.get('cookie').split('=')[1];
-    payload = validateJWT(token);
+    const token = req.get('cookie')?.split('=')[1] || '';
+    let payload = validateJWT(token) as JwtPayload;
     if (payload == null) {
         console.log("Invalid JWT in request!");
         return res.status(401).json({message: "Invalid credentials!"});
@@ -160,12 +173,12 @@ app.get('/transactions', async (req, res) => {
 });
 
 // get transaction categories - requires credentials
-app.get('/categories', async (req,res) => {
+app.get('/categories', async (req,res): Promise<any> => {
     console.log("Categories endpoint accessed!");
 
     // get & verify JWT
-    token = req.get('cookie').split('=')[1];
-    payload = validateJWT(token);
+    const token = req.get('cookie')?.split('=')[1] || '';
+    const payload = validateJWT(token) as JwtPayload;
     if (payload == null) {
         console.log("Invalid JWT in request!");
         return res.status(401).json({message: "Invalid credentials!"});
@@ -191,3 +204,5 @@ app.get('/categories', async (req,res) => {
 app.listen(PORT, () => {
     console.log(`Server Running on Port ${PORT}`);
 });
+
+// // module.exports.handler = serverless(app);
