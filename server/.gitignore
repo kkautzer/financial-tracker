@@ -1,4 +1,2 @@
-.amplify-hosting
-dist
 node_modules
 .env
