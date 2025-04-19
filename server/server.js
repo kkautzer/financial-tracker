@@ -20,9 +20,9 @@ app.use(cors({
 
 
 const PORT = process.env.PORT; // port that this server will listen on - make API endpoint requests to this port
-const dbHost = process.env.HOST;
-const dbUser = process.env.USER;
-const dbPass = process.env.PASSW;
+const dbHost = process.env.HOST_CLOUD;
+const dbUser = process.env.USER_CLOUD;
+const dbPass = process.env.PASSW_CLOUD;
 const dbName = process.env.NAME;
 
 // Connect to the database
@@ -37,7 +37,7 @@ db.connect((err) => {
         console.log("Error connecting to mySQL: " + err.stack);
         return;
     } else  {
-        console.log("Connected to mySQL as ID = " + db.threadId);
+        console.log("Connected to database at '"+dbHost+"' with ID="+db.threadId)
     }
 });
 
