@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router';
-
+import { API_BASE_URL } from '../../constants.js'
 export default function Login(props) {
     const navigate = useNavigate();
     const emailRef = useRef('');
@@ -18,7 +18,7 @@ export default function Login(props) {
     function attemptLogin(e) {
         e.preventDefault();
 
-        fetch('http://localhost:5555/login', {
+        fetch(`${API_BASE_URL}/login`, {
             method: "POST",
             credentials: 'include',
             headers: {

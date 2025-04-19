@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { API_BASE_URL } from "../../constants";
 
 export default function Logout() {
     const navigate = useNavigate();
@@ -8,7 +9,7 @@ export default function Logout() {
     if (loginStatus !== 'true') {
         navigate('/auth/login');
     } else {
-        fetch('http://localhost:5555/logout', {
+        fetch(`${API_BASE_URL}/logout`, {
             method: "POST",
             credentials: 'include',
             headers: {

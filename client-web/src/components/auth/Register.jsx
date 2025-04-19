@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router';
+import { API_BASE_URL } from '../../constants';
 export default function Register(props) {
     const navigate = useNavigate();
     
@@ -28,7 +29,7 @@ export default function Register(props) {
         passRef.current.value = '';
         cPassRef.current.value = '';
 
-        fetch('http://localhost:5555/register', {
+        fetch(`${API_BASE_URL}/register`, {
             method: "POST",
             credentials: 'include',
             headers: {
@@ -45,7 +46,7 @@ export default function Register(props) {
             if (status === 200 || status === 201) { // successful account creation, so send a login request immediately
                 emailRef.current.value='';
                 console.log(response.message);
-                fetch("http://localhost:5555/login", {
+                fetch(`${API_BASE_URL}/login`, {
                     method: "POST",
                     credentials: "include",
                     headers: {
