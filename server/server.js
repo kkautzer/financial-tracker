@@ -18,12 +18,13 @@ app.use(cors({
     credentials: true
 }));
 
+console.log((process.env.PRODUCTION) ? " dave " : "marsk") 
 
 const PORT = process.env.PORT; // port that this server will listen on - make API endpoint requests to this port
-const dbHost = process.env.HOST_CLOUD;
-const dbUser = process.env.USER_CLOUD;
-const dbPass = process.env.PASSW_CLOUD;
 const dbName = process.env.NAME;
+const dbHost = (process.env.PRODUCTION) ? process.env.HOST_CLOUD : process.env.HOST_LOCAL
+const dbUser = (process.env.PRODUCTION) ? process.env.USER_CLOUD : process.env.USER_LOCAL
+const dbPass = (process.env.PRODUCTION) ? process.env.PASSW_CLOUD : process.env.PASSW_LOCAL
 
 // Connect to the database
 const db = mysql.createConnection({
