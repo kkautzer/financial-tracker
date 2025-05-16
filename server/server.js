@@ -18,8 +18,6 @@ app.use(cors({
     credentials: true
 }));
 
-console.log((process.env.PRODUCTION) ? " dave " : "marsk") 
-
 const PORT = process.env.PORT; // port that this server will listen on - make API endpoint requests to this port
 const dbName = process.env.NAME;
 const dbHost = (process.env.PRODUCTION) ? process.env.HOST_CLOUD : process.env.HOST_LOCAL
