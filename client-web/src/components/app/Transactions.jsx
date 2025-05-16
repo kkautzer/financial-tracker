@@ -50,7 +50,7 @@ export default function Transactions() {
                         <div className='collapse-content'>
                             <p className='text-lg mt-2'>// this should be a list of {item.name} incomes for the currently selected period!</p>
                             <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById('incomesModal').showModal()}>+ Add Income</button>
-                            <TransactionForm modalId='incomesModal' isIncome='true' handleSubmission={handleAddTransaction}/>
+                            <TransactionForm modalId='incomesModal' isIncome={true} handleSubmission={handleAddTransaction}/>
                         </div>
                     </div>
                 })}
@@ -70,7 +70,7 @@ export default function Transactions() {
                         <div className='collapse-content'>
                             <p className='text-lg mt-2'>// this should be a list of {item.name} expenses for the currently selected period!</p>
                             <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById('expensesModal').showModal()}>+ Add Expense</button>
-                            <TransactionForm modalId='expensesModal' isIncome='false' handleSubmission={handleAddTransaction}/>
+                            <TransactionForm modalId='expensesModal' handleSubmission={handleAddTransaction}/>
                         </div>
                     </div>
                 })}
