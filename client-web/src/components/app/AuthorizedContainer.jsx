@@ -20,13 +20,14 @@ export default function AuthorizedContainer() {
     // get finance data from backend API
     
     let newData = [ // temporary sample data
-      {name:"Food", value: 450},
-      { name: "Bills", value: 330 },
-      { name: "Transport", value: 150 },
-      { name: "Entertainment", value: 100 },
-      { name: "Savings", value: 2000 },
-      { name: "Loans", value: 800},
-      { name: "Rent", value: 2121.18}
+      { name: "Salary", value: 6251.18, type: "income" },
+      { name:"Food", value: -450, type: "expense" },
+      { name: "Bills", value: -330, type: "expense" },
+      { name: "Transport", value: -150, type: "expense" },
+      { name: "Entertainment", value: -100, type: "expense" },
+      { name: "Savings", value: -2000, type: "expense" },
+      { name: "Loans", value: -800, type: "expense" },
+      { name: "Rent", value: -2121.18, type: "expense" }
     ];
 
     setFinanceData(newData);

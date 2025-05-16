@@ -1,10 +1,13 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router';
-import { API_BASE_URL } from '../../constants.js'
+import { API_BASE_URL } from '../../constants.js';
+
 export default function Login(props) {
     const navigate = useNavigate();
     const emailRef = useRef('');
     const passRef = useRef('');
+    const [ errMsg, setErrMsg ] = useState('');
+
 
     const loginStatus = sessionStorage.getItem('login') || 'false';
     if (loginStatus === 'true') {
@@ -41,7 +44,12 @@ export default function Login(props) {
                 console.log(response.message);
             } else {
                 passRef.current.value = '';
-                console.error("Error " + status + " -- " + response.message);
+                // console.error("Error " + status + " -- " + response.message);
+                if (status === 401) {
+                    setErrMsg("Incorrect Username or Password!");
+                } else if (status === 500) {
+                    setErrMsg("Internal Error - Please Try Again Later!");
+                }
             }
         });
     }
@@ -87,6 +95,7 @@ export default function Login(props) {
                                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"/>
                         </div>
                     </div>
+                    <p className='font-medium text-red-600 text-center semibold'>{errMsg}</p>
                     <div>
                         <button type="submit"
                             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:cursor-pointer">
