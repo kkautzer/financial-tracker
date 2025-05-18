@@ -40,11 +40,8 @@ export default function Login(props) {
                 passRef.current.value='';
                 sessionStorage.setItem("login", true);
                 navigate('/app');
-
-                console.log(response.message);
             } else {
                 passRef.current.value = '';
-                // console.error("Error " + status + " -- " + response.message);
                 if (status === 401) {
                     setErrMsg("Incorrect Username or Password!");
                 } else if (status === 500) {

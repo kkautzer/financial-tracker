@@ -15,7 +15,6 @@ export default function TransactionForm({isIncome = false, handleSubmission = ()
                     <button className="btn btn-gray-300 mt-2 ml-1">Cancel</button>
                 </form>
             </div>
-            {/* // click anywhere outside to close // <form method='dialog' className="modal-backdrop hover:cursor-default"><button className="hover:cursor-default"></button></form> */}
         </dialog>
     </>
 }
