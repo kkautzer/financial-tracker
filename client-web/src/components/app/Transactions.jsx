@@ -113,12 +113,12 @@ export default function Transactions() {
                 {expenseData.map((item) => {
                     return <div key={item.name} className='collapse collapse-arrow bg-base-100 border-base-300 border rounded-none border-x-0'>
                         <input type='checkbox' className='peer'/>
-                        <p className='collapse-title pdeer-checked:bg-base-200'>
+                        <p className='collapse-title'>
                             <span className='text-2xl font-semibold'>{item.name}</span>
                             <br/>
                             <span className='text-lg mt-1'>${Math.abs(item.value).toFixed(2)} | {(100*item.value / totalExpenses).toFixed(2)}% of total expenses</span>
                         </p>
-                        <div className='collapse-content peer-checked:pt-2 pgeer-checked:bg-base-200 peer-checked:border-t-0'>
+                        <div className='collapse-content peer-checked:pt-2 peer-checked:bg-base-200 peer-checked:border-t-0'>
                             <ul>
                                 {
                                     mapWithDefault(
@@ -134,7 +134,7 @@ export default function Transactions() {
                                     )
                                 }
                             </ul>
-                            <button className='btn btn-primary w-1/1 mt-2' onClick={() => document.getElementById('expensesModal').showModal()}>+ Add Expense</button>
+                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById('expensesModal').showModal()}>+ Add Expense</button>
                             <TransactionForm modalId='expensesModal' handleSubmission={handleAddTransaction}/>
                         </div>
                     </div>

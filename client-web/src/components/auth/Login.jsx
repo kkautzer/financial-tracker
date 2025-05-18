@@ -16,8 +16,6 @@ export default function Login(props) {
         }, [loginStatus])
     }
 
-
-
     function attemptLogin(e) {
         e.preventDefault();
 
