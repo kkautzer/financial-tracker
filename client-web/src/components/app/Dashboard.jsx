@@ -3,10 +3,10 @@ import FinanceDataContext from '../../contexts/FinanceDataContext';
 import { useContext } from 'react';
 
 export default function Dashboard(props) {
-    const finData = useContext(FinanceDataContext)
-    finData.forEach((item) => item.value = Math.abs(item.value))    
+    const catData = useContext(FinanceDataContext).categories || [];
+    catData.forEach((item) => item.value = Math.abs(item.value))    
         
-    let sortedExpenseData = finData.filter((item) => item.type === "expense");
+    let sortedExpenseData = catData.filter((item) => item.type === "expense");
     sortedExpenseData.sort((a,b) => {
         if (a.value > b.value) {
             return -1;
@@ -18,7 +18,7 @@ export default function Dashboard(props) {
     });
     
     const total = sortedExpenseData.reduce((sum, item) => sum+item.value, 0)
-    const income = finData.filter((item) => item.type === "income").reduce((sum, item) => sum+item.value, 0)
+    const income = catData.filter((item) => item.type === "income").reduce((sum, item) => sum+item.value, 0)
 
     const pieColors = ["#6366f1", "#ec4899", "#10b981", "#f59e0b", "#3b82f6", "#ef4444", "#14b8a6", "#8b5cf6", "#f97316", "#22c55e"];
 
@@ -56,7 +56,7 @@ export default function Dashboard(props) {
                     <ResponsiveContainer width='100%' style={{aspectRatio:'1/1'}}>
                         <PieChart>
                             <Pie dataKey="value" cx='50%' cy='50%' data={sortedExpenseData} label={ ({name}) => `${name}`} innerRadius={'45%'} outerRadius={'70%'}>
-                                {finData.map((entry, index) => {
+                                {catData.map((entry, index) => {
                                     return <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                                 })}
                             </Pie>
