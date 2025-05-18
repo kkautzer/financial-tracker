@@ -30,20 +30,20 @@ export default function Dashboard(props) {
                 <div className='basis-1/4 text-center'><button className='btn btn-primary'>Next</button></div>
             </div>
 
-            <div className='flex align-middle mx-10'>
-                <div className='card basis-1/3 border-2 m-3'> { /* income card */}
+            <div className='lg:flex align-middle mx-10'>
+                <div className='card basis-1/1 lg:basis-1/3 border-2 m-3'> { /* income card */}
                     <div className='card-body'>
                         <h2 className='card-title justify-center text-center text-6xl'>${income}</h2>
                         <h4 className='justify-center text-center text-xl'>Total Income</h4>
                     </div>
                 </div>
-                <div className='card basis-1/3 border-2 m-3'> { /* expense card */}
+                <div className='card basis-1/1 lg:basis-1/3 border-2 m-3'> { /* expense card */}
                     <div className='card-body'>
                         <h2 className='card-title justify-center text-center text-6xl'>${total.toFixed(2)}</h2>
                         <h4 className='justify-center text-center text-xl'>Total Expenses</h4>
                     </div>
                 </div>
-                <div className='card basis-1/3 border-2 m-3'> { /* budget card */}
+                <div className='card basis-1/1 lg:basis-1/3 border-2 m-3'> { /* budget card */}
                     <div className='card-body'>
                         <h2 className='card-title justify-center text-center text-6xl'>${(income-total).toFixed(2)}</h2>
                         <h4 className='justify-center text-center text-xl'>Leftover Income</h4>

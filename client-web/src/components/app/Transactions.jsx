@@ -11,7 +11,6 @@ export default function Transactions() {
     }
 
     function mapWithDefault(array, callback, defaultValue = []) {
-        console.log(array)
         if (array.length < 1) {
             return defaultValue;
         } else {
@@ -51,8 +50,6 @@ export default function Transactions() {
         }
     });
 
-    console.log(transData)
-
     function handleAddTransaction(e) {
         alert("Adding transaction!!")
     }
@@ -77,7 +74,7 @@ export default function Transactions() {
             <h2 className='text-3xl'>Incomes</h2>
             <div className='ml-3 mt-3'>
                 {incomeData.map((item) => {
-                    return <div key={item.name} className='collapse collapse-arrow bg-base-100 border-base-300 border rounded-none border-x-0'>
+                    return <div key={item.id} className='collapse collapse-arrow bg-base-100 border-base-300 border rounded-none border-x-0'>
                         <input type='checkbox' className='peer'/>
                         <p className='collapse-title peer-checked:border-b-2 peer-checked:border-base-300'>
                             <span className='text-2xl font-semibold'>{item.name}</span>
@@ -90,7 +87,7 @@ export default function Transactions() {
                                     mapWithDefault(
                                         getTransactionsByCategoryId(item.id),
                                         (trans) => {
-                                            return <li className='mb-3'>
+                                            return <li key={trans.id} className='mb-3'>
                                                 <span className='text-lg m-0'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</span>
                                                 <br/>
                                                 <span className='text-lg text-gray-600'>{trans.date} | {Math.abs(100*trans.value / item.value).toFixed(2)}% of total {item.name}</span>
@@ -111,7 +108,7 @@ export default function Transactions() {
             <h2 className='text-3xl'>Expenses</h2>
             <div className='ml-3 mt-3'>
                 {expenseData.map((item) => {
-                    return <div key={item.name} className='collapse collapse-arrow bg-base-100 border-base-300 border rounded-none border-x-0'>
+                    return <div key={item.id} className='collapse collapse-arrow bg-base-100 border-base-300 border rounded-none border-x-0'>
                         <input type='checkbox' className='peer'/>
                         <p className='collapse-title'>
                             <span className='text-2xl font-semibold'>{item.name}</span>
@@ -124,7 +121,7 @@ export default function Transactions() {
                                     mapWithDefault(
                                         getTransactionsByCategoryId(item.id),
                                         (trans) => {
-                                            return <li className='mb-3'>
+                                            return <li key={trans.id} className='mb-3'>
                                                 <span className='text-lg m-0'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</span>
                                                 <br/>
                                                 <span className='text-lg text-gray-600'>{trans.date} | {Math.abs(100*trans.value / item.value).toFixed(2)}% of total {item.name}</span>
