@@ -2,6 +2,7 @@
 
 #### Overview
 > Note that this project is currently a work in progress...
+> 
 > Web Client publicly available at https://financial-tracker-l4xs.onrender.com
 >
 > Mobile Client Coming Soon!
