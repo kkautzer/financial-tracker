@@ -1,4 +1,4 @@
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts'
+import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { useContext } from 'react';
 import FinanceDataContext from '../../contexts/FinanceDataContext';
 
@@ -21,6 +21,7 @@ export default function Transactions() {
     const finData = useContext(FinanceDataContext)
     const catData = finData.categories || [];
     const transData = finData.transactions || [];
+    const sumData = finData.incomeExpenseSummary || [];
 
     catData.sort((a,b) => {
         if (Math.abs(a.value) > Math.abs(b.value)) {
@@ -54,20 +55,40 @@ export default function Transactions() {
         alert("Adding transaction!!")
     }
 
+    const incomeExpenseSummaryData = sumData.filter((period) => period.period <= "2025-08").map((data) => {
+        let nd = data
+        nd.expenses = Math.abs(nd.expenses);
+        return nd;
+    });
+    // incomeExpenseSummaryData = incomeExpenseSummaryData.slice()
     const incomeData = catData.filter((item) => item.type==="income");
     const expenseData = catData.filter((item) => item.type==="expense");
     const totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0)
     const totalExpenses = expenseData.reduce((sum, item) => sum + item.value, 0)
 
     return <div className='my-4 mx-15'>
-        <div>
-            {/* this should be a double bar graph, with a comparison of monthly income vs expenses*/}
-        </div>
-
         <div className='text-xl flex align-middle'>
             <div className='basis-1/4 text-center'><button className='btn btn-primary'>Previous</button></div>
             <div className='basis-1/2 text-center my-auto'><p className='align-middle'>Select Period</p></div>
             <div className='basis-1/4 text-center'><button className='btn btn-primary'>Next</button></div>
+        </div>
+
+        <div className='mt-4'>
+            <ResponsiveContainer width='100%' style={{aspectRatio: '4/1'}}>
+                <BarChart 
+                    width={500} height={300}
+                    data={incomeExpenseSummaryData.slice(Math.max(incomeExpenseSummaryData.length-6, 0), incomeExpenseSummaryData.length)}
+                    margin={{top: 5, right: 30, left: 20, bottom: 5}}
+                >
+                    <CartesianGrid strokeDashArray="3 3" />
+                    <XAxis dataKey="period" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="incomes" fill='#7762c7' />
+                    <Bar dataKey="expenses" fill='#444444' />
+                </BarChart>
+            </ResponsiveContainer>
         </div>
 
         <div className='mt-4'>
