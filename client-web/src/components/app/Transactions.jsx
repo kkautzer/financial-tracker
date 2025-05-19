@@ -1,11 +1,11 @@
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import FinanceDataContext from '../../contexts/FinanceDataContext';
 
 import TransactionForm from './components/TransactionForm';
 
 
-export default function Transactions() {
+export default function Transactions(props) {
     function getTransactionsByCategoryId(id) {
         return transData.filter((tr) => String(tr?.categoryId) === String(id))
     }
@@ -18,6 +18,44 @@ export default function Transactions() {
         }
     }
 
+    function periodToDateString(period) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+        const split = period.split('-');
+
+        return months[parseInt(split[1]) -1] + " " + split[0];
+    }
+
+    function setPreviousPeriod() {
+        setPeriod((prev) => {
+            let split = prev.split('-');
+            if (parseInt(split[1]) === 1) {
+                split[0] = String(parseInt(split[0]) - 1).padStart(4, '0')
+                split[1] = String(12);
+            } else {
+                split[1] = String(parseInt(split[1]) - 1).padStart(2, '0');
+            }
+
+            return split.join('-');
+        })
+    }
+
+    function setNextPeriod() {
+        setPeriod((prev) => {
+            let split = prev.split('-');
+            if (parseInt(split[1]) === 12) {
+                split[0] = String(parseInt(split[0]) + 1).padStart(4, '0')
+                split[1] = '01';
+            } else {
+                split[1] = String(parseInt(split[1]) + 1).padStart(2, '0');
+            }
+
+            return split.join('-');
+        })
+    }
+
+    const currentPeriod = (new Date(Date.now()).toISOString().split('-').slice(0,2).join('-'));
+    const [ period, setPeriod ] = useState(currentPeriod); 
     const finData = useContext(FinanceDataContext)
     const catData = finData.categories || [];
     const transData = finData.transactions || [];
@@ -55,7 +93,7 @@ export default function Transactions() {
         alert("Adding transaction!!")
     }
 
-    const incomeExpenseSummaryData = sumData.filter((period) => period.period <= "2025-08").map((data) => {
+    const incomeExpenseSummaryData = sumData.filter((sumPeriod) => sumPeriod.period <= period).map((data) => {
         let nd = data
         nd.expenses = Math.abs(nd.expenses);
         return nd;
@@ -68,10 +106,10 @@ export default function Transactions() {
 
     return <div className='my-4 mx-15'>
         <div className='text-xl flex align-middle'>
-            <div className='basis-1/4 text-center'><button className='btn btn-primary'>Previous</button></div>
-            <div className='basis-1/2 text-center my-auto'><p className='align-middle'>Select Period</p></div>
-            <div className='basis-1/4 text-center'><button className='btn btn-primary'>Next</button></div>
-        </div>
+            <div className='basis-1/4 text-center'><button disabled={incomeExpenseSummaryData.length === 1} onClick={setPreviousPeriod} className='btn btn-primary'>Previous</button></div>
+                <div className='basis-1/2 text-center my-auto'><strong>{periodToDateString(period)}</strong></div>
+                <div className='basis-1/4 text-center'><button disabled={period === currentPeriod} onClick={setNextPeriod} className='btn btn-primary'>Next</button></div>
+            </div>
 
         <div className='mt-4'>
             <ResponsiveContainer width='100%' style={{aspectRatio: '4/1'}}>
