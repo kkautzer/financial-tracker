@@ -6,6 +6,8 @@ import TransactionForm from './components/TransactionForm';
 
 
 export default function Transactions(props) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
     function getTransactionsByCategoryId(id) {
         return transData.filter((tr) => String(tr?.categoryId) === String(id))
     }
@@ -19,10 +21,7 @@ export default function Transactions(props) {
     }
 
     function periodToDateString(period) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
         const split = period.split('-');
-
         return months[parseInt(split[1]) -1] + " " + split[0];
     }
 
@@ -96,19 +95,21 @@ export default function Transactions(props) {
     const incomeExpenseSummaryData = sumData.filter((sumPeriod) => sumPeriod.period <= period).map((data) => {
         let nd = data
         nd.expenses = Math.abs(nd.expenses);
+        nd.periodString = periodToDateString(nd.period)
         return nd;
     });
-    // incomeExpenseSummaryData = incomeExpenseSummaryData.slice()
+
+
     const incomeData = catData.filter((item) => item.type==="income");
     const expenseData = catData.filter((item) => item.type==="expense");
     const totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0)
     const totalExpenses = expenseData.reduce((sum, item) => sum + item.value, 0)
 
     return <div className='my-4 mx-15'>
-        <div className='text-xl flex align-middle'>
-            <div className='basis-1/4 text-center'><button disabled={incomeExpenseSummaryData.length === 1} onClick={setPreviousPeriod} className='btn btn-primary'>Previous</button></div>
-                <div className='basis-1/2 text-center my-auto'><strong>{periodToDateString(period)}</strong></div>
-                <div className='basis-1/4 text-center'><button disabled={period === currentPeriod} onClick={setNextPeriod} className='btn btn-primary'>Next</button></div>
+        <div className='text-xl sm:flex align-middle'>
+            <div className='sm:basis-1/4 text-center'><button disabled={incomeExpenseSummaryData.length === 1} onClick={setPreviousPeriod} className='btn btn-primary'>Previous</button></div>
+                <div className='sm:basis-1/2 text-center my-auto'><strong>{periodToDateString(period)}</strong></div>
+                <div className='sm:basis-1/4 text-center'><button disabled={period === currentPeriod} onClick={setNextPeriod} className='btn btn-primary'>Next</button></div>
             </div>
 
         <div className='mt-4'>
@@ -119,7 +120,7 @@ export default function Transactions(props) {
                     margin={{top: 5, right: 30, left: 20, bottom: 5}}
                 >
                     <CartesianGrid strokeDashArray="3 3" />
-                    <XAxis dataKey="period" />
+                    <XAxis dataKey="periodString" />
                     <YAxis />
                     <Tooltip />
                     <Legend />
@@ -133,7 +134,7 @@ export default function Transactions(props) {
             <h2 className='text-3xl'>Incomes</h2>
             <div className='ml-3 mt-3'>
                 {incomeData.map((item) => {
-                    return <div key={item.id} className='collapse collapse-arrow bg-base-100 border-base-300 border rounded-none border-x-0'>
+                    return <div key={item.id} className='collapse collapse-arrow bg-base-100  border-base-300 border rounded-none border-x-0'>
                         <input type='checkbox' className='peer'/>
                         <p className='collapse-title peer-checked:border-b-2 peer-checked:border-base-300'>
                             <span className='text-2xl font-semibold'>{item.name}</span>
@@ -167,7 +168,7 @@ export default function Transactions(props) {
             <h2 className='text-3xl'>Expenses</h2>
             <div className='ml-3 mt-3'>
                 {expenseData.map((item) => {
-                    return <div key={item.id} className='collapse collapse-arrow bg-base-100 border-base-300 border rounded-none border-x-0'>
+                    return <div key={item.id} className='collapse collapse-arrow border-base-300 border rounded-none border-x-0'>
                         <input type='checkbox' className='peer'/>
                         <p className='collapse-title'>
                             <span className='text-2xl font-semibold'>{item.name}</span>
