@@ -13,7 +13,7 @@ export default function Navbar() {
                 <div className="dropdown dropdown-end">
                     <div tabIndex={0} role='button' className="btn btn-ghost btn-circle avatar">
                         <div className="w-10 rounded-full">
-                            <img alt='Profile Picture / User Avatar' src='../assets/temp_pfp.jpg'/>
+                            <img alt='Profile Picture / User Avatar' src='/src/components/assets/profile.png' />
                             {/* image / PFP goes here!! */}
                         </div>
                     </div>

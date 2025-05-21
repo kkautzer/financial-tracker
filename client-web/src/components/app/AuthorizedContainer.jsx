@@ -32,14 +32,14 @@ export default function AuthorizedContainer() {
         {period: '2025-05', incomes: 6251.18, expenses: -4022.98},
       ],
       categories: [ // temporary sample data
-        { id: '0', period: '2025-05', name: "Salary", value: 6251.18, type: "income" },
-        { id: '1', period: '2025-05', name:"Food", value: -450, type: "expense" },
-        { id: '2', period: '2025-05', name: "Bills", value: -330, type: "expense" },
-        { id: '3', period: '2025-05', name: "Transport", value: -150, type: "expense" },
-        { id: '4', period: '2025-05', name: "Entertainment", value: -100, type: "expense" },
-        { id: '5', period: '2025-05', name: "Savings", value: -2000, type: "expense" },
-        { id: '6', period: '2025-05', name: "Loans", value: -800, type: "expense" },
-        { id: '7', period: '2025-05', name: "Rent", value: -2121.18, type: "expense" }
+        { id: '0', period: '2025-05', name: "Salary", value: 6251.18, target: 6300, type: "income" },
+        { id: '1', period: '2025-05', name:"Food", value: -450, target: -500, type: "expense" },
+        { id: '2', period: '2025-05', name: "Bills", value: -330, target: -450, type: "expense" },
+        { id: '3', period: '2025-05', name: "Transport", value: -150, target: -200, type: "expense" },
+        { id: '4', period: '2025-05', name: "Entertainment", value: -100, target: -100, type: "expense" },
+        { id: '5', period: '2025-05', name: "Savings", value: -2000, target: -2500, type: "expense" },
+        { id: '6', period: '2025-05', name: "Loans", value: -800, target: -1000, type: "expense" },
+        { id: '7', period: '2025-05', name: "Rent", value: -2121.18, target: -2200, type: "expense" }
       ],
       transactions: [
         { id: '100', period: '2025-05', name: "Car Loan", value: -200, date: "May 5, 2025", categoryId: '6'},
