@@ -28,8 +28,8 @@ export default function AuthorizedContainer() {
         {period: '2025-01', incomes: 6251.18, expenses: -4395.55},
         {period: '2025-02', incomes: 6251.18, expenses: -5160.26},
         {period: '2025-03', incomes: 6251.18, expenses: -4815.03},
-        {period: '2025-04', incomes: 6251.18, expenses: -5951.18},
-        {period: '2025-05', incomes: 6251.18, expenses: -4022.98},
+        {period: '2025-04', incomes: 6251.18, expenses: -4022.98},
+        {period: '2025-05', incomes: 6251.18, expenses: -5951.18},
       ],
       categories: [ // temporary sample data
         { id: '0', period: '2025-05', name: "Salary", value: 6251.18, target: 6300, type: "income" },
