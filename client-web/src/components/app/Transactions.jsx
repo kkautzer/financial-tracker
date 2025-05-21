@@ -100,8 +100,8 @@ export default function Transactions(props) {
     });
 
 
-    const incomeData = catData.filter((item) => item.type==="income");
-    const expenseData = catData.filter((item) => item.type==="expense");
+    const incomeData = catData.filter((item) => item.type==="income" && item.period === period);
+    const expenseData = catData.filter((item) => item.type==="expense" && item.period === period);
     const totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0)
     const totalExpenses = expenseData.reduce((sum, item) => sum + item.value, 0)
 
@@ -133,7 +133,9 @@ export default function Transactions(props) {
         <div className='mt-4'>
             <h2 className='text-3xl'>Incomes</h2>
             <div className='ml-3 mt-3'>
-                {incomeData.map((item) => {
+                { (incomeData.length > 0)
+                ?
+                incomeData.map((item) => {
                     return <div key={item.id} className='collapse collapse-arrow bg-base-100  border-base-300 border rounded-none border-x-0'>
                         <input type='checkbox' className='peer'/>
                         <p className='collapse-title peer-checked:border-b-2 peer-checked:border-base-300'>
@@ -161,13 +163,18 @@ export default function Transactions(props) {
                             <TransactionForm modalId='incomesModal' isIncome={true} handleSubmission={handleAddTransaction}/>
                         </div>
                     </div>
-                })}
+                })
+                : 
+                <p>No incomes for this period!</p>
+                }
             </div>
         </div>
         <div className='mt-4'>
             <h2 className='text-3xl'>Expenses</h2>
             <div className='ml-3 mt-3'>
-                {expenseData.map((item) => {
+                { (expenseData.length > 0)
+                ?
+                expenseData.map((item) => {
                     return <div key={item.id} className='collapse collapse-arrow border-base-300 border rounded-none border-x-0'>
                         <input type='checkbox' className='peer'/>
                         <p className='collapse-title'>
@@ -195,7 +202,10 @@ export default function Transactions(props) {
                             <TransactionForm modalId='expensesModal' handleSubmission={handleAddTransaction}/>
                         </div>
                     </div>
-                })}
+                })
+                : 
+                <p>No expenses for this period!</p>
+                }
             </div>
         </div>
     </div>
