@@ -60,8 +60,7 @@ app.get('/', (req, res) => {
 })
 
 // User Account Creation
-app.post("/register", async (req, res) => {
-    console.log("Registration Endpoint Accessed");
+app.post("/api/register", async (req, res) => {
     const {email, password } = req.body;
 
     const hashed = await bcrypt.hash(password, 10);
@@ -85,8 +84,7 @@ app.post("/register", async (req, res) => {
 });
 
 // User Login Verification
-app.post("/login", async (req, res) => {
-    console.log("Login Endpoint Accessed");
+app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
 
     db.query("select * from users where user_email = ?", [email], async (err, result) => {
@@ -122,7 +120,7 @@ app.post("/login", async (req, res) => {
 });
 
 // User Logout Functionality
-app.post('/logout', async (req, res) => {
+app.post('/api/logout', async (req, res) => {
     
     // get & verify JWT
     token = req.get('cookie')?.split('=')[1];
@@ -142,10 +140,8 @@ app.post('/logout', async (req, res) => {
 });
 
 // get transactions - requires credentials
-app.get('/transactions', async (req, res) => {
-    // // // // console.log(req.get('cookie'));
-    console.log("Transactions endpoint accessed!");
-    
+app.get('/api/transactions', async (req, res) => {
+
     // get & verify JWT
     token = req.get('cookie')?.split('=')?.[1];
     payload = validateJWT(token);
@@ -167,8 +163,7 @@ app.get('/transactions', async (req, res) => {
 });
 
 
-app.post('/transactions', async (req, res) => {
-    console.log("Adding transaction accessed!");
+app.post('/api/transactions', async (req, res) => {
     const {catId, name, amt, date} = req.body;
     
     // verify JWT
@@ -192,8 +187,7 @@ app.post('/transactions', async (req, res) => {
 })
 
 // get transaction categories - requires credentials
-app.get('/categories', async (req,res) => {
-    console.log("Categories endpoint accessed!");
+app.get('/api/categories', async (req,res) => {
 
     // get & verify JWT
     token = req.get('cookie')?.split('=')?.[1];
@@ -215,10 +209,9 @@ app.get('/categories', async (req,res) => {
     });
 });
 
-app.post('/categories', async (req, res) => {
+app.post('/api/categories', async (req, res) => {
     const {name, isExpense, budget} = req.body;
 
-    console.log("Adding category accessed!");
     token = req.get('cookie')?.split('=')?.[1];
     payload = validateJWT(token);
     if (payload == null) {
@@ -236,7 +229,54 @@ app.post('/categories', async (req, res) => {
             res.status(200).json({message: "Successfully created new category"});
         }
     })
+});
 
+app.put('/api/categories/', async (req, res) => {
+    const { id, name, isExpense, budget } = req.body;
+
+    // verify JWT
+    token = req.get('cookie').split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log('Invalid JWT in request!');
+        return res.status(401).json({message: "Invalid credentials!"});
+    }
+
+    // update entry w/ matching id
+    db.query('update categories set category_name = ?, category_is_expense = ?, category_budget = ? where category_id = ? and user_id = ?', [name, isExpense, budget, id, payload.userId], (err, result) => {
+        if (err) {
+            console.log("Error updating category");
+            console.log(err);
+            res.status(500).json({message: "Error updating category in database"});
+        } else {
+            if (result.affectedRows > 0) {
+                res.status(200).json({message: "Successfully updated category"})
+            } else {
+                res.status(404).json({message: "No categories in database have a matching ID"})
+            }
+        }
+    })
+});
+
+app.delete('/api/categories/', async (req, res) => {
+    const { id } = req.body;
+
+    token = req.get('cookie').split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log('Invalid JWT in request!');
+        return res.status(401).json({message: "Invalid credentials"});
+    }
+
+    db.query('delete from categories where user_id = ? and category_id = ?', [payload.userId, id], (err, result) => {
+        if (err) {
+            console.log('Error deleting category')
+            console.log(err);
+            res.status(500).json({message: "Error deleting category in database"})
+        } else {
+            res.status(200).json({message: "Successfully deleted category!"});
+        }
+    })
 })
 
 // Start Server
