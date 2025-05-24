@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { API_BASE_URL } from "../../../constants";
 
-export default function BudgetModal({ modalId='', isIncome = false }) {
+export default function BudgetModal({ modalId, isIncome = false, forcePageUpdate}) {
 
     function handleSubmission(e) {
         fetch(`${API_BASE_URL}/categories`, {
@@ -20,6 +20,7 @@ export default function BudgetModal({ modalId='', isIncome = false }) {
             const data = await res.json();
             if (status === 200) {
                 alert("Successfully created category");
+                forcePageUpdate();
             } else {
                 alert("Failed to create category - see consoles for more information")
                 console.log(status);
@@ -49,7 +50,7 @@ export default function BudgetModal({ modalId='', isIncome = false }) {
                     </select>
 
                     <label htmlFor='budget'>Amount:</label>
-                    <input className="block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" type='number' placeholder="Budget Amount" ref={budgetRef} id='budget' name='budget'/>
+                    <input className="block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" type='number' step='0.01' min='0' placeholder="Budget Amount" ref={budgetRef} id='budget' name='budget'/>
                     <button className="btn btn-primary mt-2 mr-1" onClick={handleSubmission}>Create</button>
                     <button className="btn bg-[#d1d1d1] hover:bg-[#aaaaaa] mt-2 ml-1 mr-1">Cancel</button>
                 </form>

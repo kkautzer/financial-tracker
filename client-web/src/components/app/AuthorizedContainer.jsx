@@ -33,6 +33,8 @@ export default function AuthorizedContainer() {
     }
   }, [loginStatus])
   
+
+  let [ update, setUpdate ] = useState(0); // this is used to forcibly reload transactions and categories data (when data changes made through form submissions)
   let [ financeData, setFinanceData ] = useState([]);
   let [ transactions, setTransactions ] = useState([]);
   let [ categories, setCategories ] = useState([]);
@@ -68,7 +70,7 @@ export default function AuthorizedContainer() {
         console.log(data);
       }
     });
-  }, []);
+  }, [update]);
 
   // get categories data
   useEffect(() => {
@@ -98,8 +100,7 @@ export default function AuthorizedContainer() {
         console.log(data);
       }
     })
-  }, []);
-
+  }, [update]);
 
   // set all other data
   const categoryValues = {};
@@ -124,9 +125,12 @@ export default function AuthorizedContainer() {
       }
 
       // generate values for each category
-      if (`${trans.period}` in categoryValues[`${trans.categoryId}`]) {
+      if (categoryValues[`${trans.categoryId}`] && `${trans.period}` in categoryValues[`${trans.categoryId}`]) {
         categoryValues[`${trans.categoryId}`][`${trans.period}`]  += trans.value;
       } else {
+        if (!(categoryValues[`${trans.categoryId}`])) {
+          categoryValues[`${trans.categoryId}`] = {};
+        }
         categoryValues[`${trans.categoryId}`][`${trans.period}`] = trans.value;
       }
     });
@@ -162,7 +166,8 @@ export default function AuthorizedContainer() {
     let newData = {
       incomeExpenseSummary: incomeExpenseSummary,
       categories: categoriesByPeriod,
-      transactions: transactions
+      transactions: transactions,
+      forceUpdate: () => {setUpdate((p) => p+1); console.log('page update force')}
     }
     setFinanceData(newData);
   }, [ transactions, categories ] )
