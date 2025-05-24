@@ -56,15 +56,15 @@ export default function Dashboard() {
         }
     });
     
-    const income = (sumData.filter((item) => item.period === period)?.[0]?.incomes || 0)
-    const expenses = Math.abs(sumData.filter((item) => item.period === period)?.[0]?.expenses || 0)
+    const income = (sumData?.[period]?.incomes || 0)
+    const expenses = Math.abs(sumData?.[period]?.expenses || 0)
 
     const pieColors = ["#6366f1", "#ec4899", "#10b981", "#f59e0b", "#3b82f6", "#ef4444", "#14b8a6", "#8b5cf6", "#f97316", "#22c55e"];
 
     return <div className=''>
         <div className='my-4 mx-15'>
             <div className='text-xl flex align-middle'>
-                <div className='basis-1/4 text-center'><button disabled={sumData.filter((sumPeriod) => sumPeriod.period <= period).length <= 1} onClick={setPreviousPeriod} className='btn btn-primary'>Previous</button></div>
+                <div className='basis-1/4 text-center'><button disabled={Object.keys(sumData).filter((sumPeriod) => sumPeriod <= period).length <= 1} onClick={setPreviousPeriod} className='btn btn-primary'>Previous</button></div>
                 <div className='basis-1/2 text-center my-auto'><strong>{periodToDateString(period)}</strong></div>
                 <div className='basis-1/4 text-center'><button disabled={period === currentPeriod} onClick={setNextPeriod} className='btn btn-primary'>Next</button></div>
             </div>
@@ -119,7 +119,7 @@ export default function Dashboard() {
                     {sortedExpenseData.slice(0,5).map((item, idx) => {
                         return <div className='card border-2 m-2 p-4' key={idx}>
                             <h2 className='card-title text-2xl'>{item.name}</h2>
-                            <h4 className='text-lg'>${(item.value).toFixed(2)} | {(100 * item.value / expenses).toFixed(2)}% of Expenses</h4>
+                            <h4 className='text-lg'>${(item.value).toFixed(2)} | {(100 * item.value / expenses).toFixed(2)}% of Expenses | {(100*item.value / income).toFixed(2)}% of Income</h4>
                         </div>
                     })}
                 </div>

@@ -92,10 +92,13 @@ export default function Transactions(props) {
         alert("Adding transaction!!")
     }
 
-    const incomeExpenseSummaryData = sumData.filter((sumPeriod) => sumPeriod.period <= period).map((data) => {
-        let nd = data
-        nd.expenses = Math.abs(nd.expenses);
-        nd.periodString = periodToDateString(nd.period)
+    const incomeExpenseSummaryData = Object.keys(sumData).filter((sumPeriod) => sumPeriod <= period).sort().map((period) => {
+
+        let nd = {};
+        nd.period = period;
+        nd.incomes = sumData[period].incomes;
+        nd.expenses = Math.abs(sumData[period].expenses);
+        nd.periodString = periodToDateString(period)
         return nd;
     });
 
@@ -147,7 +150,7 @@ export default function Transactions(props) {
                             <ul>
                                 {
                                     mapWithDefault(
-                                        getTransactionsByCategoryId(item.id),
+                                        getTransactionsByCategoryId(item.id).filter((tr) => tr.period === period),
                                         (trans) => {
                                             return <li key={trans.id} className='mb-3'>
                                                 <span className='text-lg m-0'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</span>
@@ -159,8 +162,8 @@ export default function Transactions(props) {
                                     )
                                 }
                             </ul>
-                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById('incomesModal').showModal()}>+ Add Income</button>
-                            <TransactionForm modalId='incomesModal' isIncome={true} handleSubmission={handleAddTransaction}/>
+                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`incomesModal${item.id}`).showModal()}>+ Add Income</button>
+                            <TransactionForm presetId={item.id} catData={incomeData} modalId={`incomesModal${item.id}`} isIncome={true} handleSubmission={handleAddTransaction}/>
                         </div>
                     </div>
                 })
@@ -186,7 +189,7 @@ export default function Transactions(props) {
                             <ul>
                                 {
                                     mapWithDefault(
-                                        getTransactionsByCategoryId(item.id),
+                                        getTransactionsByCategoryId(item.id).filter((tr) => tr.period === period),
                                         (trans) => {
                                             return <li key={trans.id} className='mb-3'>
                                                 <span className='text-lg m-0'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</span>
@@ -198,8 +201,8 @@ export default function Transactions(props) {
                                     )
                                 }
                             </ul>
-                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById('expensesModal').showModal()}>+ Add Expense</button>
-                            <TransactionForm modalId='expensesModal' handleSubmission={handleAddTransaction}/>
+                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`expensesModal${item.id}`).showModal()}>+ Add Expense</button>
+                            <TransactionForm presetId={item.id} catData={expenseData} modalId={`expensesModal${item.id}`} handleSubmission={handleAddTransaction}/>
                         </div>
                     </div>
                 })

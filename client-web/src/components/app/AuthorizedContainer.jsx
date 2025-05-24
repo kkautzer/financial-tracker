@@ -18,34 +18,72 @@ export default function AuthorizedContainer() {
 
   useEffect(() => {
     // get finance data from backend API
-    
+    const transactions = [ // sample transactions from api
+      { id: '78', period: '2025-05', name: "Salary", value: 6200, date: "May 2, 2025", categoryId: '0'},
+      { id: '100', period: '2025-05', name: "Car Loan", value: -500, date: "May 5, 2025", categoryId: '6'},
+      { id: '101', period: '2025-05', name: "Student Loan", value: -600, date: "May 1, 2025", categoryId: '6'},
+      { id: '102', period: '2025-05', name: "Netflix Subscription", value: -20, date: "May 11, 2025", categoryId: '4'},
+      { id: '102', period: '2025-05', name: "Rent Payment", value: -2128.18, date: "May 22, 2025", categoryId: '7'},
+      { id: '79', period: '2025-04', name: "Salary", value: 6200, date: "April 2, 2025", categoryId: '0'},
+      { id: '104', period: '2025-04', name: "Rent Payment", value: -2128.18, date: "April 22, 2025", categoryId: '7'},
+
+    ];
+
+    let categories = [ // sample categories from api
+      { id: '0', name: "Salary", target: 6300, type: "income" },
+      { id: '1', name:"Food", target: -500, type: "expense" },
+      { id: '2', name: "Bills", target: -450, type: "expense" },
+      { id: '3', name: "Transport", target: -200, type: "expense" },
+      { id: '4', name: "Entertainment", target: -100, type: "expense" },
+      { id: '5', name: "Savings",  target: -2500, type: "expense" },
+      { id: '6', name: "Loans",  target: -1000, type: "expense" },
+      { id: '7', name: "Rent", target: -2200, type: "expense" }
+    ];
+
+    const categoryValues = {};
+    transactions.forEach((trans) => {
+      // generate values for each category
+      if (`${trans.categoryId}` in categoryValues && `${trans.period}` in categoryValues[`${trans.categoryId}`]) {
+        categoryValues[`${trans.categoryId}`][`${trans.period}`]  += trans.value;
+      } else {
+        if (!(`${trans.categoryId}` in categoryValues)) {
+          categoryValues[`${trans.categoryId}`] = {};
+        }
+        categoryValues[`${trans.categoryId}`][`${trans.period}`] = trans.value;
+        
+      }
+    });
+
+    /// match each categories with their period and values
+    const categoriesByPeriod = [];
+    categories.forEach((cat) => {
+      if (`${cat.id}` in categoryValues) {
+        for (let period in categoryValues[`${cat.id}`]) {
+          categoriesByPeriod.push({
+            ...cat,
+            period: period,
+            value: categoryValues[`${cat.id}`][period]
+          });
+        }
+      }
+    });
+
+    const incomeExpenseSummary = {};
+    categoriesByPeriod.forEach((cat) => {
+      if (!(cat.period in incomeExpenseSummary)) {
+        incomeExpenseSummary[cat.period] = {incomes: 0, expenses: 0};
+      }
+      if (cat.type === 'income') {
+        incomeExpenseSummary[cat.period].incomes += cat.value;
+      } else if (cat.type === 'expense') {
+        incomeExpenseSummary[cat.period].expenses += cat.value;
+      }
+    });
+
     let newData = {
-      incomeExpenseSummary: [
-        {period: '2024-09', incomes: 6251.18, expenses: -4022.98},
-        {period: '2024-10', incomes: 6251.18, expenses: -4670.41},
-        {period: '2024-11', incomes: 6251.18, expenses: -4049.63},
-        {period: '2024-12', incomes: 6251.18, expenses: -4886.12},
-        {period: '2025-01', incomes: 6251.18, expenses: -4395.55},
-        {period: '2025-02', incomes: 6251.18, expenses: -5160.26},
-        {period: '2025-03', incomes: 6251.18, expenses: -4815.03},
-        {period: '2025-04', incomes: 6251.18, expenses: -4022.98},
-        {period: '2025-05', incomes: 6251.18, expenses: -5951.18},
-      ],
-      categories: [ // temporary sample data
-        { id: '0', period: '2025-05', name: "Salary", value: 6251.18, target: 6300, type: "income" },
-        { id: '1', period: '2025-05', name:"Food", value: -450, target: -500, type: "expense" },
-        { id: '2', period: '2025-05', name: "Bills", value: -330, target: -450, type: "expense" },
-        { id: '3', period: '2025-05', name: "Transport", value: -150, target: -200, type: "expense" },
-        { id: '4', period: '2025-05', name: "Entertainment", value: -100, target: -100, type: "expense" },
-        { id: '5', period: '2025-05', name: "Savings", value: -2000, target: -2500, type: "expense" },
-        { id: '6', period: '2025-05', name: "Loans", value: -800, target: -1000, type: "expense" },
-        { id: '7', period: '2025-05', name: "Rent", value: -2121.18, target: -2200, type: "expense" }
-      ],
-      transactions: [
-        { id: '100', period: '2025-05', name: "Car Loan", value: -200, date: "May 5, 2025", categoryId: '6'},
-        { id: '101', period: '2025-05', name: "Student Loan", value: -600, date: "May 1, 2025", categoryId: '6'},
-        { id: '102', period: '2025-05', name: "Netflix Subscription", value: -20, date: "April 30, 2025", categoryId: '4'},
-      ]
+      incomeExpenseSummary: incomeExpenseSummary,
+      categories: categoriesByPeriod,
+      transactions: transactions
     }
     setFinanceData(newData);
   }, [])
