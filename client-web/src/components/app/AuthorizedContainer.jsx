@@ -2,9 +2,28 @@ import { useState, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router';
 import Navbar from './NavbarAuthorized.jsx';
 import FinanceDataContext from '../../contexts/FinanceDataContext.js';
-
+import { API_BASE_URL } from '../../constants.js';
 
 export default function AuthorizedContainer() {
+  function getNextPeriod(period) {
+    let split = period.split('-');
+    if (parseInt(split[1]) === 12) {
+        split[0] = String(parseInt(split[0]) + 1).padStart(4, '0')
+        split[1] = '01';
+    } else {
+        split[1] = String(parseInt(split[1]) + 1).padStart(2, '0');
+    }
+
+    return split.join('-');
+  }
+
+  function datetoTDateString(date) {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    const split = date.split('T')[0].split('-');
+
+    return months[split[1]-1] + " " + split[2] + ", " + split[0];
+  }
+
   const navigate = useNavigate();
   const loginStatus = sessionStorage.getItem('login') || 'false';
 
@@ -15,45 +34,144 @@ export default function AuthorizedContainer() {
   }, [loginStatus])
   
   let [ financeData, setFinanceData ] = useState([]);
+  let [ transactions, setTransactions ] = useState([]);
+  let [ categories, setCategories ] = useState([]);
 
+  // get transactions data
   useEffect(() => {
-    // get finance data from backend API
-    
+    fetch(`${API_BASE_URL}/transactions`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(async (res) => {
+      const status = res.status;
+      const data = await res.json();
+      if (status === 200) {
+        let newData = data.data.map((tr) => {
+          let t = {};
+          t.id = tr['transaction_id'],
+          t.name = tr['transaction_name'];
+          t.value = tr['transaction_amt'];
+          t.date = datetoTDateString(tr['transaction_date']);
+          t.period = (tr['transaction_date'])?.split('-').slice(0,2).join('-');
+          t.categoryId = tr['category_id']
+          
+          return t;
+        });
+
+        setTransactions(newData);
+      } else {
+        console.log("Err. retrieving transactions");
+        console.log(status);
+        console.log(data);
+      }
+    });
+  }, []);
+
+  // get categories data
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/categories`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(async (res) => {
+      const status = res.status;
+      const data = await res.json();
+      if (status === 200) {
+        let newData = data.data.map((cat) => {
+          let c = {};
+          c.id = cat['category_id'],
+          c.name = cat['category_name'];
+          c.target = cat['category_budget'];
+          c.type = cat['category_is_expense'] ? 'expense' : 'income'
+          return c;
+        });
+
+        setCategories(newData);
+      } else {
+        console.log("Err. retrieving categories");
+        console.log(status);
+        console.log(data);
+      }
+    })
+  }, []);
+
+
+  // set all other data
+  const categoryValues = {};
+  const categoriesByPeriod = [];
+  const incomeExpenseSummary = {};
+  useEffect(() => {
+
+
+    categories.forEach((cat) => {
+      categoryValues[`${cat.id}`] = {};
+    })
+
+    let minPeriod = '';
+    let maxPeriod = (new Date(Date.now()).toISOString().split('-').slice(0,2).join('-'))
+    transactions.forEach((trans) => {
+      
+      if (minPeriod == '' || trans.period < minPeriod) {
+        minPeriod = trans.period;
+      }
+      if (trans.period > maxPeriod) {
+        maxPeriod = trans.period;
+      }
+
+      // generate values for each category
+      if (`${trans.period}` in categoryValues[`${trans.categoryId}`]) {
+        categoryValues[`${trans.categoryId}`][`${trans.period}`]  += trans.value;
+      } else {
+        categoryValues[`${trans.categoryId}`][`${trans.period}`] = trans.value;
+      }
+    });
+
+
+    // match each categories with their period and values
+    let currPeriod = minPeriod;
+    while (currPeriod !== '' && currPeriod <= maxPeriod) {
+      categories.forEach((cat) => {
+        categoriesByPeriod.push({
+          ...cat, 
+          period: currPeriod,
+          value: categoryValues?.[`${cat.id}`]?.[currPeriod] || 0
+        })
+      })
+      currPeriod = getNextPeriod(currPeriod);
+    }
+
+
+
+
+    categoriesByPeriod.forEach((cat) => {
+      if (!(cat.period in incomeExpenseSummary)) {
+        incomeExpenseSummary[cat.period] = {incomes: 0, expenses: 0};
+      }
+      if (cat.type === 'income') {
+        incomeExpenseSummary[cat.period].incomes += cat.value;
+      } else if (cat.type === 'expense') {
+        incomeExpenseSummary[cat.period].expenses += cat.value;
+      }
+    });
+
     let newData = {
-      incomeExpenseSummary: [
-        {period: '2024-09', incomes: 6251.18, expenses: -4022.98},
-        {period: '2024-10', incomes: 6251.18, expenses: -4670.41},
-        {period: '2024-11', incomes: 6251.18, expenses: -4049.63},
-        {period: '2024-12', incomes: 6251.18, expenses: -4886.12},
-        {period: '2025-01', incomes: 6251.18, expenses: -4395.55},
-        {period: '2025-02', incomes: 6251.18, expenses: -5160.26},
-        {period: '2025-03', incomes: 6251.18, expenses: -4815.03},
-        {period: '2025-04', incomes: 6251.18, expenses: -4022.98},
-        {period: '2025-05', incomes: 6251.18, expenses: -5951.18},
-      ],
-      categories: [ // temporary sample data
-        { id: '0', period: '2025-05', name: "Salary", value: 6251.18, target: 6300, type: "income" },
-        { id: '1', period: '2025-05', name:"Food", value: -450, target: -500, type: "expense" },
-        { id: '2', period: '2025-05', name: "Bills", value: -330, target: -450, type: "expense" },
-        { id: '3', period: '2025-05', name: "Transport", value: -150, target: -200, type: "expense" },
-        { id: '4', period: '2025-05', name: "Entertainment", value: -100, target: -100, type: "expense" },
-        { id: '5', period: '2025-05', name: "Savings", value: -2000, target: -2500, type: "expense" },
-        { id: '6', period: '2025-05', name: "Loans", value: -800, target: -1000, type: "expense" },
-        { id: '7', period: '2025-05', name: "Rent", value: -2121.18, target: -2200, type: "expense" }
-      ],
-      transactions: [
-        { id: '100', period: '2025-05', name: "Car Loan", value: -200, date: "May 5, 2025", categoryId: '6'},
-        { id: '101', period: '2025-05', name: "Student Loan", value: -600, date: "May 1, 2025", categoryId: '6'},
-        { id: '102', period: '2025-05', name: "Netflix Subscription", value: -20, date: "April 30, 2025", categoryId: '4'},
-      ]
+      incomeExpenseSummary: incomeExpenseSummary,
+      categories: categoriesByPeriod,
+      transactions: transactions
     }
     setFinanceData(newData);
-  }, [])
+  }, [ transactions, categories ] )
+
 
   return (
     <FinanceDataContext.Provider value={financeData}>
       <Navbar />
-      <Outlet/>
+      <Outlet />
     </FinanceDataContext.Provider>
   )
 }

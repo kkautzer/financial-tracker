@@ -157,12 +157,38 @@ app.get('/transactions', async (req, res) => {
     db.query("select * from transactions where user_id = ? order by transaction_date desc", [payload.userId], (err, data) => {
         if (err) {
             console.log("Error retrieving transactions from database.")
+            console.log(err);
             return res.status(500).json({message: "Error retrieving transactions from database"});
         } else {
             return res.status(200).json({message: "Successfully retrieved transactions", data: data});
         }
     });
 });
+
+
+app.post('/transactions', async (req, res) => {
+    console.log("Adding transaction accessed!");
+    const {catId, name, amt, date} = req.body;
+    
+    // verify JWT
+    token = req.get('cookie')?.split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log("Invalid JWT in request!");
+        return res.status(401).json({message: "Invalid credentials!"});
+    }
+    
+    db.query('insert into transactions (user_id, category_id, transaction_name, transaction_amt, transaction_date) values (?, ?, ?, ?, ?)', [payload.userId, catId, name, amt, date], ((err, data) => {
+        if (err) {
+            console.error("Error creating a new transaction");
+            console.log(err);
+            return res.status(500).json({message: "Error creating transaction in database"})
+        } else {
+            return res.status(200).json({message: "Successfully created transaction"})
+        }
+    })
+)
+})
 
 // get transaction categories - requires credentials
 app.get('/categories', async (req,res) => {
@@ -180,6 +206,7 @@ app.get('/categories', async (req,res) => {
     db.query('select * from categories where user_id = ?', [payload.userId], (err, data) => {
         if (err) {
             console.log("Error retrieving categories!");
+            console.log(err);
             return res.status(500).json({message: "Error retrieving categories from database"});
         } else {
             return res.status(200).json({message: "Successfully retrieved categories", data: data});
@@ -187,10 +214,29 @@ app.get('/categories', async (req,res) => {
     });
 });
 
+app.post('/categories', async (req, res) => {
+    const {name, isExpense, budget} = req.body;
 
+    console.log("Adding category accessed!");
+    token = req.get('cookie').split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log("Invalid JWT in request!");
+        return res.status(401).json({message: "Invalid credentials!"});
+    }
 
+    // insert into database
+    db.query("insert into categories (user_id, category_is_expense, category_name, category_budget) values (?, ?, ?, ?)", [payload.userId, isExpense, name, budget], (err, result) => {
+        if (err) {
+            console.log("Error adding new category.");
+            console.log(err);
+            res.status(500).json({message: "Error creating category in database"})
+        } else {
+            res.status(200).json({message: "Successfully created new category"});
+        }
+    })
 
-
+})
 
 // Start Server
 app.listen(PORT, () => {

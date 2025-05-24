@@ -4,7 +4,6 @@ import FinanceDataContext from '../../contexts/FinanceDataContext';
 
 import TransactionForm from './components/TransactionForm';
 
-
 export default function Transactions(props) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -88,17 +87,14 @@ export default function Transactions(props) {
         }
     });
 
-    function handleAddTransaction(e) {
-        alert("Adding transaction!!")
-    }
-
-    const incomeExpenseSummaryData = sumData.filter((sumPeriod) => sumPeriod.period <= period).map((data) => {
-        let nd = data
-        nd.expenses = Math.abs(nd.expenses);
-        nd.periodString = periodToDateString(nd.period)
+    const incomeExpenseSummaryData = Object.keys(sumData).filter((sumPeriod) => sumPeriod <= period).sort().map((period) => {
+        let nd = {};
+        nd.period = period;
+        nd.incomes = sumData[period].incomes;
+        nd.expenses = Math.abs(sumData[period].expenses);
+        nd.periodString = periodToDateString(period)
         return nd;
     });
-
 
     const incomeData = catData.filter((item) => item.type==="income" && item.period === period);
     const expenseData = catData.filter((item) => item.type==="expense" && item.period === period);
@@ -108,9 +104,9 @@ export default function Transactions(props) {
     return <div className='my-4 mx-15'>
         <div className='text-xl sm:flex align-middle'>
             <div className='sm:basis-1/4 text-center'><button disabled={incomeExpenseSummaryData.length === 1} onClick={setPreviousPeriod} className='btn btn-primary'>Previous</button></div>
-                <div className='sm:basis-1/2 text-center my-auto'><strong>{periodToDateString(period)}</strong></div>
-                <div className='sm:basis-1/4 text-center'><button disabled={period === currentPeriod} onClick={setNextPeriod} className='btn btn-primary'>Next</button></div>
-            </div>
+            <div className='sm:basis-1/2 text-center my-auto'><strong>{periodToDateString(period)}</strong></div>
+            <div className='sm:basis-1/4 text-center'><button disabled={period === currentPeriod} onClick={setNextPeriod} className='btn btn-primary'>Next</button></div>
+        </div>
 
         <div className='mt-4'>
             <ResponsiveContainer width='100%' style={{aspectRatio: '4/1'}}>
@@ -137,7 +133,7 @@ export default function Transactions(props) {
                 ?
                 incomeData.map((item) => {
                     return <div key={item.id} className='collapse collapse-arrow bg-base-100  border-base-300 border rounded-none border-x-0'>
-                        <input type='checkbox' className='peer'/>
+                        <input type='checkbox' className='peer' id={`expandCheckbox${item.id}`}/>
                         <p className='collapse-title peer-checked:border-b-2 peer-checked:border-base-300'>
                             <span className='text-2xl font-semibold'>{item.name}</span>
                             <br/>
@@ -147,7 +143,7 @@ export default function Transactions(props) {
                             <ul>
                                 {
                                     mapWithDefault(
-                                        getTransactionsByCategoryId(item.id),
+                                        getTransactionsByCategoryId(item.id).filter((tr) => tr.period === period),
                                         (trans) => {
                                             return <li key={trans.id} className='mb-3'>
                                                 <span className='text-lg m-0'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</span>
@@ -159,8 +155,8 @@ export default function Transactions(props) {
                                     )
                                 }
                             </ul>
-                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById('incomesModal').showModal()}>+ Add Income</button>
-                            <TransactionForm modalId='incomesModal' isIncome={true} handleSubmission={handleAddTransaction}/>
+                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`incomesModal${item.id}`).showModal()}>+ Add Income</button>
+                            <TransactionForm presetId={item.id} catData={incomeData} modalId={`incomesModal${item.id}`} isIncome={true}/>
                         </div>
                     </div>
                 })
@@ -176,7 +172,7 @@ export default function Transactions(props) {
                 ?
                 expenseData.map((item) => {
                     return <div key={item.id} className='collapse collapse-arrow border-base-300 border rounded-none border-x-0'>
-                        <input type='checkbox' className='peer'/>
+                        <input type='checkbox' className='peer' id={`expandCheckbox${item.id}`}/>
                         <p className='collapse-title'>
                             <span className='text-2xl font-semibold'>{item.name}</span>
                             <br/>
@@ -186,7 +182,7 @@ export default function Transactions(props) {
                             <ul>
                                 {
                                     mapWithDefault(
-                                        getTransactionsByCategoryId(item.id),
+                                        getTransactionsByCategoryId(item.id).filter((tr) => tr.period === period),
                                         (trans) => {
                                             return <li key={trans.id} className='mb-3'>
                                                 <span className='text-lg m-0'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</span>
@@ -198,8 +194,8 @@ export default function Transactions(props) {
                                     )
                                 }
                             </ul>
-                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById('expensesModal').showModal()}>+ Add Expense</button>
-                            <TransactionForm modalId='expensesModal' handleSubmission={handleAddTransaction}/>
+                            <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`expensesModal${item.id}`).showModal()}>+ Add Expense</button>
+                            <TransactionForm presetId={item.id} catData={expenseData} modalId={`expensesModal${item.id}`}/>
                         </div>
                     </div>
                 })
