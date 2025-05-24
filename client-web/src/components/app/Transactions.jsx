@@ -54,7 +54,7 @@ export default function Transactions(props) {
 
     const currentPeriod = (new Date(Date.now()).toISOString().split('-').slice(0,2).join('-'));
     const [ period, setPeriod ] = useState(currentPeriod); 
-    const finData = useContext(FinanceDataContext)
+    const finData = useContext(FinanceDataContext);
     const catData = finData.categories || [];
     const transData = finData.transactions || [];
     const sumData = finData.incomeExpenseSummary || [];
@@ -156,7 +156,7 @@ export default function Transactions(props) {
                                 }
                             </ul>
                             <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`incomesModal${item.id}`).showModal()}>+ Add Income</button>
-                            <TransactionForm presetId={item.id} catData={incomeData} modalId={`incomesModal${item.id}`} isIncome={true}/>
+                            <TransactionForm presetId={item.id} catData={incomeData} modalId={`incomesModal${item.id}`} isIncome={true} forcePageUpdate={finData?.forceUpdate}/>
                         </div>
                     </div>
                 })
@@ -195,7 +195,7 @@ export default function Transactions(props) {
                                 }
                             </ul>
                             <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`expensesModal${item.id}`).showModal()}>+ Add Expense</button>
-                            <TransactionForm presetId={item.id} catData={expenseData} modalId={`expensesModal${item.id}`}/>
+                            <TransactionForm presetId={item.id} catData={expenseData} modalId={`expensesModal${item.id}`} forcePageUpdate={finData?.forceUpdate}/>
                         </div>
                     </div>
                 })

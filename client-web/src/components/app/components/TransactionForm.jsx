@@ -1,6 +1,6 @@
 import { useRef } from "react"
 import { API_BASE_URL } from "../../../constants";
-export default function TransactionForm({presetId = -1, catData = {}, isIncome = false, modalId = '' }) {
+export default function TransactionForm({presetId = -1, catData = {}, isIncome = false, modalId = '', forcePageUpdate}) {
     function handleSubmission(e) {
         alert("Adding transaction!!");
         fetch(`${API_BASE_URL}/transactions`, {
@@ -23,6 +23,7 @@ export default function TransactionForm({presetId = -1, catData = {}, isIncome =
                 amtRef.current.value = '';
                 dateRef.current.value = undefined;
                 alert("Successfully added transaction!")
+                forcePageUpdate();
             } else {
                 alert("Failed to add transactions - see console for further details.");
                 console.log(status);

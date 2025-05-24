@@ -5,13 +5,6 @@ import CategoryForm from './components/CategoryForm';
 
 
 export default function Budget() {
-    function handleUpdateCategory(e) {
-        alert("Saving changes...");
-    }
-
-    function handleDeleteCategory(e) {
-        alert('Deleting category...');
-    }
 
     function periodToDateString(period) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -61,6 +54,7 @@ export default function Budget() {
     const [ isIncomeSelected, setIncomeSelected ] = useState(true);
     const catData = useContext(FinanceDataContext).categories || [];
     const sumData = useContext(FinanceDataContext).incomeExpenseSummary || [];
+    const forcePageUpdate = useContext(FinanceDataContext)?.forceUpdate;
     catData.forEach((item) => {
         item.value = Math.abs(item.value)
         item.target = Math.abs(item.target)
@@ -116,7 +110,7 @@ export default function Budget() {
                                     <p className='text-lg text-left'>{`Earned $${(cat.value).toFixed(2)} of $${(cat.target).toFixed(2)} (${pct}%)`}</p>
                                 </div>
                             </button>
-                            <BudgetModal modalId={`budgetModal${cat.id}`} isIncome={true} handleSubmission={handleUpdateCategory} handleDeletion={handleDeleteCategory} category={cat}/>
+                            <BudgetModal modalId={`budgetModal${cat.id}`} category={cat} forcePageUpdate={forcePageUpdate}/>
                         </div>
                     })
                 : 
@@ -133,13 +127,13 @@ export default function Budget() {
                                     <p className='text-lg text-left'>{`Spent $${(cat.value).toFixed(2)} of $${(cat.target).toFixed(2)} (${pct}%)`}</p>
                                 </div>
                             </button>
-                            <BudgetModal modalId={`budgetModal${cat.id}`} handleSubmission={handleUpdateCategory} handleDeletion={handleDeleteCategory} category={cat}/>
+                            <BudgetModal modalId={`budgetModal${cat.id}`} category={cat} forcePageUpdate={forcePageUpdate}/>
                         </div>
                     })
                 }
 
                 <button className='btn btn-primary' onClick={() => {document.getElementById(`createNew${isIncomeSelected ? 'Income' : "Expense"}`).showModal()}}>+ Add New Category</button>
-                <CategoryForm modalId={`createNew${isIncomeSelected ? "Income" : "Expense"}`} isIncome={isIncomeSelected} />
+                <CategoryForm modalId={`createNew${isIncomeSelected ? "Income" : "Expense"}`} isIncome={isIncomeSelected} forcePageUpdate={forcePageUpdate}/>
             </div>
         </div>
     </div>
