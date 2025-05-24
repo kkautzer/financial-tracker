@@ -113,7 +113,7 @@ app.post("/login", async (req, res) => {
                 res.cookie('fintracker_auth', token, {
                     httpOnly: true,
                     secure: true,
-                    sameSite: 'strict'
+                    sameSite: 'None'
                 });
                 return res.status(200).json({message: "Successfully Logged In!"});
             }
