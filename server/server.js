@@ -143,10 +143,11 @@ app.post('/logout', async (req, res) => {
 
 // get transactions - requires credentials
 app.get('/transactions', async (req, res) => {
+    // // // // console.log(req.get('cookie'));
     console.log("Transactions endpoint accessed!");
     
     // get & verify JWT
-    token = req.get('cookie').split('=')[1];
+    token = req.get('cookie')?.split('=')?.[1];
     payload = validateJWT(token);
     if (payload == null) {
         console.log("Invalid JWT in request!");
@@ -171,7 +172,7 @@ app.post('/transactions', async (req, res) => {
     const {catId, name, amt, date} = req.body;
     
     // verify JWT
-    token = req.get('cookie')?.split('=')[1];
+    token = req.get('cookie')?.split('=')?.[1];
     payload = validateJWT(token);
     if (payload == null) {
         console.log("Invalid JWT in request!");
@@ -195,7 +196,7 @@ app.get('/categories', async (req,res) => {
     console.log("Categories endpoint accessed!");
 
     // get & verify JWT
-    token = req.get('cookie').split('=')[1];
+    token = req.get('cookie')?.split('=')?.[1];
     payload = validateJWT(token);
     if (payload == null) {
         console.log("Invalid JWT in request!");
@@ -218,7 +219,7 @@ app.post('/categories', async (req, res) => {
     const {name, isExpense, budget} = req.body;
 
     console.log("Adding category accessed!");
-    token = req.get('cookie').split('=')[1];
+    token = req.get('cookie')?.split('=')?.[1];
     payload = validateJWT(token);
     if (payload == null) {
         console.log("Invalid JWT in request!");
