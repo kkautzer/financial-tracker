@@ -1,7 +1,6 @@
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Label } from 'recharts';
 import FinanceDataContext from '../../contexts/FinanceDataContext';
 import { useContext, useState } from 'react';
-import { useLocation } from 'react-router';
 
 export default function Dashboard() {
     function periodToDateString(period) {
@@ -41,7 +40,7 @@ export default function Dashboard() {
     }
 
     const currentPeriod = (new Date(Date.now()).toISOString().split('-').slice(0,2).join('-'));
-    const [ period, setPeriod ] = useState(currentPeriod); 
+    const [ period, setPeriod ] = useState(currentPeriod);
     const catData = useContext(FinanceDataContext).categories || [];
     const sumData = useContext(FinanceDataContext).incomeExpenseSummary || [];
     catData.forEach((item) => item.value = Math.abs(item.value))    
