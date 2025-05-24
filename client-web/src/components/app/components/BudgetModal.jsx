@@ -44,6 +44,7 @@ export default function BudgetModal({ modalId, category, forcePageUpdate }) {
             const data = await res.json();
             if (status === 200) {
                 alert("Successfully deleted category");
+                forcePageUpdate();
             } else {
                 alert("Failed to delete category - see console for more information.")
                 console.log(status);
