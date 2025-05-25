@@ -64,7 +64,7 @@ export default function BudgetModal({ modalId, category, forcePageUpdate }) {
                 <h3 className='font-bold text-2xl mb-2'>Modify {category.type.charAt(0).toUpperCase() + category.type.slice(1) } Category{(category?.name) ? " - " + category.name : ''}</h3>
                 <form method='dialog'>
                     <label htmlFor='name'>Category Name: </label>
-                    <input id='name' name='name' className="mb-2 block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" type='text' placeholder={`${category.name}`} ref={nameRef}/>
+                    <input id='name' name='name' className="mb-2 block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" type='text' defaultValue={`${category.name}`} ref={nameRef}/>
 
                     {(category.type === 'income') ? '' : <>
                         <label htmlFor='budgetType'>Budget Type: </label>
@@ -76,7 +76,7 @@ export default function BudgetModal({ modalId, category, forcePageUpdate }) {
                     }
 
                     <label htmlFor='budget'>New Budget Value: </label>
-                    <input id='budget' name='budget' className="block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" type='number' step='0.01' min='0' placeholder={`$${category.target.toFixed(2)}`} ref={budgetRef}/>
+                    <input id='budget' name='budget' className="block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" type='number' step='0.01' min='0' defaultValue={`${category.target.toFixed(2)}`} ref={budgetRef}/>
                     <button className="btn btn-primary mt-2 mr-1" onClick={handleSubmission}>Save</button>
                     <button className="btn bg-[#d1d1d1] hover:bg-[#aaaaaa] mt-2 ml-1 mr-1">Cancel</button>
                     <button className="btn bg-[#ad1717] hover:bg-[#991717] text-[white] mt-2 ml-1" onClick={handleDeletion}>Delete Category</button>

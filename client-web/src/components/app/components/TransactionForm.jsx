@@ -21,7 +21,7 @@ export default function TransactionForm({presetId = -1, catData = {}, isIncome =
             if (status === 200) {
                 nameRef.current.value = '';
                 amtRef.current.value = '';
-                dateRef.current.value = undefined;
+                dateRef.current.value = null;
                 alert("Successfully added transaction!")
                 forcePageUpdate();
             } else {
@@ -64,7 +64,7 @@ export default function TransactionForm({presetId = -1, catData = {}, isIncome =
                     <label htmlFor='date'>Transaction Date:</label>
                     <input className='block w-full rounded-md bg0white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6' type='date' id='date' name='date' ref={dateRef}/> 
                     <button className="btn btn-primary mt-2 mr-1" onClick={handleSubmission}>Add</button>
-                    <button className="btn btn-gray-300 mt-2 ml-1">Cancel</button>
+                    <button className="btn  bg-[#d1d1d1] hover:bg-[#aaaaaa] mt-2 ml-1">Cancel</button>
                 </form>
             </div>
         </dialog>

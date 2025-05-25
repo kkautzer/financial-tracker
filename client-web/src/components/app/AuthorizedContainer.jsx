@@ -167,7 +167,7 @@ export default function AuthorizedContainer() {
       incomeExpenseSummary: incomeExpenseSummary,
       categories: categoriesByPeriod,
       transactions: transactions,
-      forceUpdate: () => {setUpdate((p) => p+1); console.log('page update force')}
+      forceUpdate: () => setUpdate((p) => p+1)
     }
     setFinanceData(newData);
   }, [ transactions, categories ] )

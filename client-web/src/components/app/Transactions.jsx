@@ -3,6 +3,7 @@ import { useContext, useState } from 'react';
 import FinanceDataContext from '../../contexts/FinanceDataContext';
 
 import TransactionForm from './components/TransactionForm';
+import EditTransactionModal from './components/EditTransactionModal';
 
 export default function Transactions(props) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -140,21 +141,23 @@ export default function Transactions(props) {
                             <span className='text-lg mt-1'>${Math.abs(item.value).toFixed(2)} | {(100*item.value / totalIncome).toFixed(2)}% of total income</span>
                         </p>
                         <div className='collapse-content peer-checked:pt-2 peer-checked:bg-base-200 peer-checked:border-t-0'>
-                            <ul>
+                            <div>
                                 {
                                     mapWithDefault(
                                         getTransactionsByCategoryId(item.id).filter((tr) => tr.period === period),
                                         (trans) => {
-                                            return <li key={trans.id} className='mb-3'>
-                                                <span className='text-lg m-0'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</span>
-                                                <br/>
-                                                <span className='text-lg text-gray-600'>{trans.date} | {Math.abs(100*trans.value / item.value).toFixed(2)}% of total {item.name}</span>
-                                            </li>
+                                            return <div key={trans.id}>
+                                                <div onClick={() => document.getElementById(`editTransaction${trans.id}`).showModal() } className='card border-1 border-gray-400 bg-gray-200 m-2 p-4 hover:cursor-pointer'>
+                                                    <h4 className='card-title text-xl'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</h4>
+                                                    <p className='text-lg text-gray-700'>{trans.date} | {Math.abs(100*trans.value / item.value).toFixed(2)}% of total {item.name}</p>
+                                                </div>
+                                                <EditTransactionModal modalId={`editTransaction${trans.id}`} transaction={trans} catData={catData.filter((cat) => cat.period === period)} forcePageUpdate={finData?.forceUpdate} />
+                                            </div>
                                         },
-                                        <li className='text-lg text-red-700'>No {item.name} Transactions. Add one using the button below!</li>
+                                        <p className='text-lg text-red-700'>No {item.name} Transactions. Add one using the button below!</p>
                                     )
                                 }
-                            </ul>
+                            </div>
                             <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`incomesModal${item.id}`).showModal()}>+ Add Income</button>
                             <TransactionForm presetId={item.id} catData={incomeData} modalId={`incomesModal${item.id}`} isIncome={true} forcePageUpdate={finData?.forceUpdate}/>
                         </div>
@@ -179,21 +182,23 @@ export default function Transactions(props) {
                             <span className='text-lg mt-1'>${Math.abs(item.value).toFixed(2)} | {(100*item.value / totalExpenses).toFixed(2)}% of total expenses</span>
                         </p>
                         <div className='collapse-content peer-checked:pt-2 peer-checked:bg-base-200 peer-checked:border-t-0'>
-                            <ul>
+                            <div>
                                 {
                                     mapWithDefault(
                                         getTransactionsByCategoryId(item.id).filter((tr) => tr.period === period),
                                         (trans) => {
-                                            return <li key={trans.id} className='mb-3'>
-                                                <span className='text-lg m-0'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</span>
-                                                <br/>
-                                                <span className='text-lg text-gray-600'>{trans.date} | {Math.abs(100*trans.value / item.value).toFixed(2)}% of total {item.name}</span>
-                                            </li>
+                                            return <div key={trans.id}>
+                                                <div onClick={() => document.getElementById(`editTransaction${trans.id}`).showModal() } className='card border-1 border-gray-400 bg-gray-200 m-2 p-4 hover:cursor-pointer'>
+                                                    <h4 className='card-title text-xl'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</h4>
+                                                    <p className='text-lg text-gray-700'>{trans.date} | {Math.abs(100*trans.value / item.value).toFixed(2)}% of total {item.name}</p>
+                                                </div>
+                                                <EditTransactionModal modalId={`editTransaction${trans.id}`} transaction={trans} catData={catData.filter((cat) => cat.period === period)} forcePageUpdate={finData?.forceUpdate} />
+                                            </div>
                                         },
-                                        <li className='text-lg text-red-700'>No {item.name} Transactions. Add one using the button below!</li>
+                                        <p className='text-lg text-red-700'>No {item.name} Transactions. Add one using the button below!</p>
                                     )
                                 }
-                            </ul>
+                            </div>
                             <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`expensesModal${item.id}`).showModal()}>+ Add Expense</button>
                             <TransactionForm presetId={item.id} catData={expenseData} modalId={`expensesModal${item.id}`} forcePageUpdate={finData?.forceUpdate}/>
                         </div>
