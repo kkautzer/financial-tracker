@@ -182,8 +182,53 @@ app.post('/api/transactions', async (req, res) => {
         } else {
             return res.status(200).json({message: "Successfully created transaction"})
         }
+    }))
+})
+
+app.put('/api/transactions', async (req, res) => {
+    const { id, catId, name, amt, date } = req.body;
+
+    token = req.get('cookie')?.split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log("Invalid JWT in request!");
+        return res.status(401).json({message: "Invalid credentials!"});
+    }
+
+    db.query('update transactions set category_id = ?, transaction_name = ?, transaction_amt = ?, transaction_date = ? where transaction_id = ? and user_id = ?', [catId, name, amt, date, id, payload.userId], (err, result) => {
+        if (err) {
+            console.log("Error updating transaction!");
+            console.log(err);
+            return res.status(500).json({message: "Error updating transactions in database"})
+        } else {
+            if (result.affectedRows > 0) {
+                return res.status(200).json({message: "Successfully updated transaction"});
+            } else {
+                return res.status(404).json({message: "No transactions in database have a matching ID"})
+            }
+        }
     })
-)
+})
+
+app.delete('/api/transactions', async (req, res) => {
+    const { id } = req.body;
+
+    token = req.get('cookie').split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log('Invalid JWT in request!');
+        return res.status(401).json({message: "Invalid credentials"});
+    }
+
+    db.query('delete from transactions where user_id = ? and transaction_id = ?', [payload.userId, id], (err, result) => {
+        if (err) {
+            console.log('Error deleting transaction')
+            console.log(err);
+            res.status(500).json({message: "Error deleting transaction in database"})
+        } else {
+            res.status(200).json({message: "Successfully deleted transaction!"});
+        }
+    })
 })
 
 // get transaction categories - requires credentials
