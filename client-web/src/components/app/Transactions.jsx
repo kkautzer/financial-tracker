@@ -104,12 +104,15 @@ export default function Transactions(props) {
 
     return <div className='my-4 mx-15'>
         <div className='text-xl sm:flex align-middle'>
-            <div className='sm:basis-1/4 text-center'><button disabled={incomeExpenseSummaryData.length === 1} onClick={setPreviousPeriod} className='btn btn-primary'>Previous</button></div>
+            <div className='sm:basis-1/4 text-center'><button disabled={false/*incomeExpenseSummaryData.length === 1*/} onClick={setPreviousPeriod} className='btn btn-primary'>Previous</button></div>
             <div className='sm:basis-1/2 text-center my-auto'><strong>{periodToDateString(period)}</strong></div>
             <div className='sm:basis-1/4 text-center'><button disabled={period === currentPeriod} onClick={setNextPeriod} className='btn btn-primary'>Next</button></div>
         </div>
 
         <div className='mt-4'>
+            {incomeExpenseSummaryData.length === 0 ?
+                <p className='text-lg text-red-700 text-center'>No transactions for the current period - add some below!</p>
+            :
             <ResponsiveContainer width='100%' style={{aspectRatio: '4/1'}}>
                 <BarChart 
                     width={500} height={300}
@@ -125,6 +128,7 @@ export default function Transactions(props) {
                     <Bar dataKey="expenses" fill='#444444' />
                 </BarChart>
             </ResponsiveContainer>
+            }
         </div>
 
         <div className='mt-4'>
@@ -147,7 +151,7 @@ export default function Transactions(props) {
                                         getTransactionsByCategoryId(item.id).filter((tr) => tr.period === period),
                                         (trans) => {
                                             return <div key={trans.id}>
-                                                <div onClick={() => document.getElementById(`editTransaction${trans.id}`).showModal() } className='card border-1 border-gray-400 bg-gray-200 m-2 p-4 hover:cursor-pointer'>
+                                                <div onClick={() => document.getElementById(`editTransaction${trans.id}`).showModal() } className='card border-1 border-gray-400 bg-gray-200 m-2 p-4 hover:cursor-pointer hover:bg-gray-300'>
                                                     <h4 className='card-title text-xl'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</h4>
                                                     <p className='text-lg text-gray-700'>{trans.date} | {Math.abs(100*trans.value / item.value).toFixed(2)}% of total {item.name}</p>
                                                 </div>
@@ -159,13 +163,19 @@ export default function Transactions(props) {
                                 }
                             </div>
                             <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`incomesModal${item.id}`).showModal()}>+ Add Income</button>
-                            <TransactionForm presetId={item.id} catData={incomeData} modalId={`incomesModal${item.id}`} isIncome={true} forcePageUpdate={finData?.forceUpdate}/>
+                            <TransactionForm presetId={item.id} catData={catData.filter((c) => c.period === currentPeriod)} modalId={`incomesModal${item.id}`} isIncome={true} forcePageUpdate={finData?.forceUpdate}/>
                         </div>
                     </div>
                 })
-                : 
-                <p>No incomes for this period!</p>
+                : <>
+                    <p>No incomes for this period!</p>
+                    <button className='btn btn-primary mt-4' onClick={() => document.getElementById('incomesModalNew').showModal()}>Add New Income</button>
+                    <TransactionForm catData={catData.filter((c) => c.period === currentPeriod)} modalId={`incomesModalNew`} isIncome={true} forcePageUpdate={finData?.forceUpdate}/>
+                    {/* uses c.period === currentPeriod, since this component only needs to have a mapping between category id and name, and currentperiod guarantees this */}
+                </>
                 }
+
+
             </div>
         </div>
         <div className='mt-4'>
@@ -188,7 +198,7 @@ export default function Transactions(props) {
                                         getTransactionsByCategoryId(item.id).filter((tr) => tr.period === period),
                                         (trans) => {
                                             return <div key={trans.id}>
-                                                <div onClick={() => document.getElementById(`editTransaction${trans.id}`).showModal() } className='card border-1 border-gray-400 bg-gray-200 m-2 p-4 hover:cursor-pointer'>
+                                                <div onClick={() => document.getElementById(`editTransaction${trans.id}`).showModal() } className='card border-1 border-gray-400 bg-gray-200 m-2 p-4 hover:cursor-pointer hover:bg-gray-300'>
                                                     <h4 className='card-title text-xl'>{trans.name}: ${Math.abs(trans.value).toFixed(2)}</h4>
                                                     <p className='text-lg text-gray-700'>{trans.date} | {Math.abs(100*trans.value / item.value).toFixed(2)}% of total {item.name}</p>
                                                 </div>
@@ -200,12 +210,17 @@ export default function Transactions(props) {
                                 }
                             </div>
                             <button className='btn btn-primary w-1/1 mt-4' onClick={() => document.getElementById(`expensesModal${item.id}`).showModal()}>+ Add Expense</button>
-                            <TransactionForm presetId={item.id} catData={expenseData} modalId={`expensesModal${item.id}`} forcePageUpdate={finData?.forceUpdate}/>
+                            <TransactionForm presetId={item.id} catData={catData.filter((c) => c.period === currentPeriod)} modalId={`expensesModal${item.id}`} forcePageUpdate={finData?.forceUpdate}/>
                         </div>
                     </div>
                 })
-                : 
-                <p>No expenses for this period!</p>
+                : <>
+                    <p>No expenses for this period!</p>
+                    <button className='btn btn-primary mt-4' onClick={() => document.getElementById('expensesModalNew').showModal()}>Add New Expense</button>
+                    <TransactionForm catData={catData.filter((c) => c.period === currentPeriod)} modalId={`expensesModalNew`} forcePageUpdate={finData?.forceUpdate}/>
+                    {/* uses c.period === currentPeriod, since this component only needs to have a mapping between category id and name, and currentperiod guarantees this */}
+    
+                </>
                 }
             </div>
         </div>

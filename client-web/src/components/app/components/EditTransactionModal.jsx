@@ -74,9 +74,16 @@ export default function BudgetModal({ modalId, transaction = {}, catData = {}, f
                 <form method='dialog'>
                     <label htmlFor='category'>Category Name: </label>
                     <select required defaultValue={transaction.categoryId} className="mb-2 block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400  hover:cursor-pointer hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" id='category' name='category' ref={catRef}>
-                        {catData.map((cat) => {
-                            return <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        })}
+                        <optgroup label='Incomes'>
+                            {catData.filter((c) => c.type==='income').map((cat) => {
+                                return <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            })}
+                        </optgroup>
+                        <optgroup label='Expenses'>
+                            {catData.filter((c) => c.type==='expense').map((cat) => {
+                                return <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            })}
+                        </optgroup>
                     </select>
 
                     <label htmlFor='name'>Transaction Name: </label>
@@ -86,7 +93,7 @@ export default function BudgetModal({ modalId, transaction = {}, catData = {}, f
                     <input className="mb-2 block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" type='number' step='0.01' min='0' id='amount' name='amount' ref={amtRef} defaultValue={transaction.value.toFixed(2)}/>
                     
                     <label htmlFor='date'>Transaction Date:</label>
-                    <input className='block w-full rounded-md bg0white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6' type='date' id='date' name='date' ref={dateRef} defaultValue={tStringToDate(transaction.date)}/> 
+                    <input className='block w-full rounded-md bg0white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6' type='date' id='date' name='date' ref={dateRef} defaultValue={tStringToDate(transaction.date)} min='2020-01-01' max={new Date().toISOString().split('T')[0]}/> 
                     <button className="btn btn-primary mt-2 mr-1" onClick={handleSubmission}>Update</button>
                     <button className="btn bg-[#d1d1d1] hover:bg-[#aaaaaa] mt-2 ml-1 mr-1">Cancel</button>
                     <button className='btn bg-[#ad1717] hover:bg-[#991717] text-[white] mt-2 ml-1' onClick={handleDeletion}>Delete</button>

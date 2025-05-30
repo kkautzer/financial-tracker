@@ -2,7 +2,6 @@ import { useRef } from "react"
 import { API_BASE_URL } from "../../../constants";
 export default function TransactionForm({presetId = -1, catData = {}, isIncome = false, modalId = '', forcePageUpdate}) {
     function handleSubmission(e) {
-        alert("Adding transaction!!");
         fetch(`${API_BASE_URL}/transactions`, {
             method: "POST",
             credentials: 'include',
@@ -25,7 +24,7 @@ export default function TransactionForm({presetId = -1, catData = {}, isIncome =
                 alert("Successfully added transaction!")
                 forcePageUpdate();
             } else {
-                alert("Failed to add transactions - see console for further details.");
+                alert("Failed to add transactions - see the console for further details.");
                 console.log(status);
                 console.log(response);
             }
@@ -50,9 +49,16 @@ export default function TransactionForm({presetId = -1, catData = {}, isIncome =
                 <form method='dialog'>
                     <label htmlFor='category'>Category Name: </label>
                     <select required defaultValue={presetId} className="mb-2 block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400  hover:cursor-pointer hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" id='category' name='category' ref={catRef}>
-                        {catData.map((cat) => {
-                            return <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        })}
+                        <optgroup label='Incomes'>
+                            {catData.filter((c) => c.type==='income').map((cat) => {
+                                return <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            })}
+                        </optgroup>
+                        <optgroup label='Expenses'>
+                            {catData.filter((c) => c.type==='expense').map((cat) => {
+                                return <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            })}
+                        </optgroup>
                     </select>
 
                     <label htmlFor='name'>Transaction Name: </label>
@@ -62,7 +68,7 @@ export default function TransactionForm({presetId = -1, catData = {}, isIncome =
                     <input className="mb-2 block w-full rounded-md bg-white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" type='number' step='0.01' min='0' placeholder="$0.00" id='amount' name='amount' ref={amtRef}/>
                     
                     <label htmlFor='date'>Transaction Date:</label>
-                    <input className='block w-full rounded-md bg0white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6' type='date' id='date' name='date' ref={dateRef}/> 
+                    <input className='block w-full rounded-md bg0white px-3 py-1.5 mt-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6' type='date' id='date' name='date' ref={dateRef} min='2020-01-01' max={new Date().toISOString().split('T')[0]}/> 
                     <button className="btn btn-primary mt-2 mr-1" onClick={handleSubmission}>Add</button>
                     <button className="btn  bg-[#d1d1d1] hover:bg-[#aaaaaa] mt-2 ml-1">Cancel</button>
                 </form>
