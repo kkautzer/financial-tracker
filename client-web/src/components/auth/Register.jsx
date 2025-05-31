@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router';
 import { API_BASE_URL } from '../../constants';
 export default function Register(props) {
@@ -7,20 +7,24 @@ export default function Register(props) {
     const emailRef = useRef('');
     const passRef = useRef('');
     const cPassRef = useRef('');
+    const [ errMsg, setErrMsg ]= useState('');
+    const [ isLoading, setIsLoading ] = useState(false);
 
     const loginStatus = sessionStorage.getItem('login') || 'false';
-    if (loginStatus === 'true') {
-        useEffect(() => {
+    useEffect(() => {
+        if (loginStatus === 'true') {
             navigate('/app/dashboard');
-        }, [loginStatus])
-    }
+        }
+    }, [loginStatus])
 
 
     function attemptRegister(e) {
         e.preventDefault();
+        setIsLoading(true);
 
         if (passRef.current.value !== cPassRef.current.value) {
-            alert("Passwords do not match!");
+            setErrMsg("Passwords do not match!")
+            setIsLoading(false);
             return;
         }
 
@@ -63,15 +67,22 @@ export default function Register(props) {
                         // set user login data
                         console.log(response.message);
                         sessionStorage.setItem('login', true);
+                        setErrMsg('');
                         navigate('/app');
-
-                    } else {
+                    } else {    
+                        setErrMsg(response.message);
                         console.error("Error " + status + " -- " + response.message);
                     }
+
                 });
+            } else if (status === 409) {
+                setErrMsg('This email is already in use!');
             } else {
+                setErrMsg(response.message);
                 console.error("Error " + status + " -- " + response.message);
             }
+
+            setIsLoading(false);
         });
     }
 
@@ -123,6 +134,11 @@ export default function Register(props) {
                             />
                         </div>
                     </div>
+
+                    { (isLoading) 
+                        ? <p className='font-medium text-gray-700 text-center semibold'>Loading...</p>
+                        : <p className='font-medium text-red-600 text-center semibold'>{errMsg}</p>
+                    }
 
                     <div>
                         <button type="submit"

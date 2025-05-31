@@ -7,7 +7,7 @@ export default function Login(props) {
     const emailRef = useRef('');
     const passRef = useRef('');
     const [ errMsg, setErrMsg ] = useState('');
-
+    const [ isLoading, setIsLoading ] = useState(false);
 
     const loginStatus = sessionStorage.getItem('login') || 'false';
     if (loginStatus === 'true') {
@@ -18,6 +18,8 @@ export default function Login(props) {
 
     function attemptLogin(e) {
         e.preventDefault();
+        
+        setIsLoading(true);
 
         fetch(`${API_BASE_URL}/login`, {
             method: "POST",
@@ -37,6 +39,7 @@ export default function Login(props) {
                 emailRef.current.value='';
                 passRef.current.value='';
                 sessionStorage.setItem("login", true);
+                setErrMsg('');
                 navigate('/app');
             } else {
                 passRef.current.value = '';
@@ -46,14 +49,15 @@ export default function Login(props) {
                     setErrMsg("Internal Error - Please Try Again Later!");
                 }
             }
+            setIsLoading(false);
         });
     }
-
+    
     return <>
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img
-                    alt="Your Company"
+                    alt="MyFinanceTracker Logo"
                     src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
                     className="mx-auto h-10 w-auto"
                 />
@@ -90,7 +94,10 @@ export default function Login(props) {
                                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"/>
                         </div>
                     </div>
-                    <p className='font-medium text-red-600 text-center semibold'>{errMsg}</p>
+                    { (isLoading) 
+                        ? <p className='font-medium text-gray-700 text-center semibold'>Loading...</p>
+                        : <p className='font-medium text-red-600 text-center semibold'>{errMsg}</p>
+                    }
                     <div>
                         <button type="submit"
                             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:cursor-pointer">
