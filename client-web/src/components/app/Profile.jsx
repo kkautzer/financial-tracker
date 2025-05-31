@@ -15,8 +15,6 @@ export default function Profile() {
     function updateProfile(event, newPfp, newEmail, newPassword) {
         event.preventDefault();
 
-        alert("Please Enter Your Password:")
-
         fetch(`${API_BASE_URL}/profile`, {
             method: "PUT",
             credentials: 'include',
@@ -187,7 +185,7 @@ export default function Profile() {
                 </form>
             </div>
         </div>
-        {/* <PasswordConfirmationModal /> */}
+        {/* <PasswordConfirmationModal /> */} 
     </div>
     
 }
