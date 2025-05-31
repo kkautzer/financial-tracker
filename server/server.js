@@ -133,11 +133,77 @@ app.post('/api/logout', async (req, res) => {
         res.cookie('fintracker_auth', '', { // set jwt auth to empty, effectively destroy it
             httpOnly: true,
             secure: true,
-            sameSite: 'strict'
+            sameSite: 'None'
         });
         res.status(200).json({message: "Successfully Logged Out"})
     }
 });
+
+// update user account data
+app.put('/api/profile', async (req, res) => {
+    const { pfp, email, pass } = req.body;
+
+    // verify JWT is valid
+    token = req.get('cookie').split('=')[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log('Invalid JWT in request!');
+        return res.status(401).json({message: "Invalid credentials"});
+    } 
+
+    db.query('select * from users where user_email = ?', [email], async (err, result) => {
+        if (err) {
+            console.log('Error getting users');
+            console.log(err);
+            return res.status(500).json({ message: "Error getting users in database" });
+        } else if (result.length > 0) {
+            return res.status(409).json({ message: "A user with this email already exists!" });
+        } else {
+
+            let setters = [];
+            let settersVals = [];
+
+            if (pfp !== null) {
+                setters.push('user_pfp = ?');
+                settersVals.push(pfp);
+            }
+            if (email !== null) {
+                setters.push('user_email = ?');
+                settersVals.push(email);
+            }
+            if (pass !== null) {
+                const hashed = await bcrypt.hash(pass, 10);
+                setters.push("user_psw = ?");
+                settersVals.push(hashed);
+            }
+            
+            db.query(`update users set ${setters.join(' and ')} where user_id = ?`, [...settersVals, payload['userId']], (err, result) => {
+                if (err) {
+                    console.log('Error updating user')
+                    console.log(err);
+                    return res.status(500).json({message: "Error deleting category in database"})
+                } else {
+                    // update the JWT on the client w/ new info
+                    const token = jwt.sign(
+                        {
+                            userId: payload['userId'],
+                            userEmail: email,
+                        }, 
+                        process.env.JWT_SECRET,
+                        {expiresIn: '6h'}
+                    );
+                    res.cookie('fintracker_auth', token, {
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: 'None'
+                    });
+
+                    return res.status(200).json({message: "Successfully updated profile"})
+                }
+            })
+        }
+    });
+})
 
 // get transactions - requires credentials
 app.get('/api/transactions', async (req, res) => {
