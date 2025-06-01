@@ -55,7 +55,7 @@ function validateJWT(token) {
 }
 
 // API Endpoints
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     res.send("Hello world!");
 })
 
@@ -203,6 +203,29 @@ app.put('/api/profile', async (req, res) => {
             })
         }
     });
+});
+
+app.delete('/api/profile', async (req, res) => {
+    // get & verify JWT
+    token = req.get('cookie')?.split('=')?.[1];
+    payload = validateJWT(token);
+    if (payload == null) {
+        console.log("Invalid JWT in request!");
+        return res.status(401).json({message: "Invalid credentials!"});
+    }
+
+    db.query('delete from users where user_id = ?', [payload['userId']], (err, result) => {
+        if (err) {
+            return res.status(500).send({message: "Internal error deleting profile."});
+        } else {
+            res.cookie('fintracker_auth', '', { // set JWT to empty, effectively destroying it
+                httpOnly: true,
+                secure: true,
+                sameSite: 'None'
+            });
+            return res.status(200).send({message: "Successfully deleted profile."})
+        }
+    })
 })
 
 // get transactions - requires credentials
