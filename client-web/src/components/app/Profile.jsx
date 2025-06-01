@@ -1,8 +1,11 @@
 import { useState, useRef, useContext } from 'react'
+import { useNavigate } from 'react-router';
 import { LoginContext } from '../../contexts/LoginContext';
 import { API_BASE_URL } from '../../constants';
 
 export default function Profile() {    
+    const navigate = useNavigate();
+
     const [ editPfp, setEditPfp ] = useState(false);
     const [ editEmail, setEditEmail ] = useState(false);
     const [ editPsw, setEditPsw ] = useState(false);
@@ -12,6 +15,28 @@ export default function Profile() {
     const pswRef = useRef(null);
     const pswCRef = useRef(null);
     
+    function deleteProfile() {
+        fetch(`${API_BASE_URL}/profile`, {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then( async (res) => {
+            const status = res.status;
+            const data = await res.json();
+            if (status === 200) {
+                alert("Successfully deleted profile");
+                sessionStorage.setItem('login', 'false');
+                navigate('/login');
+            } else {
+                alert("Failed to delete profile - see console for more information.")
+                console.log(status);
+                console.log(data);
+            }
+        })
+    }
+
     function updateProfile(event, newPfp, newEmail, newPassword) {
         event.preventDefault();
 
@@ -49,10 +74,10 @@ export default function Profile() {
     return <div className=''>
         <div className='my-4 mx-15'>
             <div>
-                <div className="flex space-x-2">
+                <div className="flex space-x-1">
                     <h3 className="text-xl">Profile Picture</h3>
-                    {/* <button 
-                        className="bg-gray-100 border-1 border-gray-700 rounded-md p-1 hover:bg-gray-200 hover:cursor-pointer"
+                    {/* <button
+                        className="border-gray-700 rounded-xl p-1 hover:bg-gray-200 hover:cursor-pointer"
                         onClick={() => {
                             emailRef.current.value = '';
                             pswRef.current.value = '';
@@ -61,7 +86,7 @@ export default function Profile() {
                             setEditEmail(false);
                             setEditPsw(false);
                         }}
-                    >Edit</button> */}
+                    ><img alt="Edit Field Button" src="/src/components/assets/edit-field.png" className='h-4'/></button> */}
                 </div>
                 <form className="px-5">
                     <label htmlFor="pfp" className="mt-2 block text-sm/6 font-medium text-gray-900">Upload Profile Picture</label>
@@ -100,10 +125,10 @@ export default function Profile() {
             </div>
 
             <div className="mt-4">
-                <div className="flex space-x-2">
+                <div className="flex space-x-1">
                     <h3 className="text-xl">Email</h3>
                     <button
-                        className="bg-gray-100 border-1 border-gray-700 rounded-md p-1 hover:bg-gray-200 hover:cursor-pointer"
+                        className="border-gray-700 rounded-xl p-1 hover:bg-gray-200 hover:cursor-pointer"
                         onClick={() => {
                             pfpRef.current.value = '';
                             pswRef.current.value = '';
@@ -112,13 +137,20 @@ export default function Profile() {
                             setEditEmail(true);
                             setEditPsw(false);
                         }}
-                    >Edit</button>
+                    ><img alt="Edit Field Button" src="/src/components/assets/edit-field.png" className='h-4'/></button>
                 </div>
                 <form className="px-5">
                     <label htmlFor="email" className="mt-2 block text-sm/6 font-medium text-gray-900">New Email</label>
-                    <input ref={emailRef} disabled={!editEmail} type='email' id='email' className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 disabled:bg-gray-100"/>
+                    <input ref={emailRef} disabled={!editEmail} required type='email' id='email' className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 disabled:bg-gray-100"/>
                     <button 
-                        onClick={(e) => {updateProfile(e, null, emailRef.current.value, null)}}
+                        onClick={(e) => {
+                            if (emailRef.current.value === '') {
+                                alert("Email cannot be blank");
+                                return;
+                            }
+
+                            updateProfile(e, null, emailRef.current.value, null)
+                        }}
                         disabled={!editEmail} 
                         className="btn btn-primary mt-2 mr-1"
                     >Save</button>
@@ -137,10 +169,10 @@ export default function Profile() {
             </div>
 
             <div className="mt-4">
-                <div className="flex space-x-2">
+                <div className="flex space-x-1">
                     <h3 className="text-xl">Password</h3>
                     <button
-                        className="bg-gray-100 border-1 border-gray-700 rounded-md p-1 hover:bg-gray-200 hover:cursor-pointer"
+                        className="border-gray-700 rounded-xl p-1 hover:bg-gray-200 hover:cursor-pointer"
                         onClick={() => {
                             pfpRef.current.value = '';
                             emailRef.current.value = '';
@@ -148,18 +180,22 @@ export default function Profile() {
                             setEditEmail(false);
                             setEditPsw(true);
                         }}
-                    >Edit</button>
+                    ><img alt="Edit Field Button" src="/src/components/assets/edit-field.png" className='h-4'/></button>
                 </div>
                 <form className="px-5">                    
                     <label htmlFor="newPass" className="mt-2 block text-sm/6 font-medium text-gray-900">New Password</label>
-                    <input ref={pswRef} disabled={!editPsw} type='password' id='newPass' className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 disabled:bg-gray-100"/>
+                    <input ref={pswRef} disabled={!editPsw} required type='password' id='newPass' className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 disabled:bg-gray-100"/>
                     
                     <label htmlFor="confPass" className="mt-2 block text-sm/6 font-medium text-gray-900">Confirm New Password</label>
-                    <input ref={pswCRef} disabled={!editPsw} type='password' id='confPass' className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 disabled:bg-gray-100"/>
+                    <input ref={pswCRef} disabled={!editPsw} required type='password' id='confPass' className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 disabled:bg-gray-100"/>
 
                     <button 
                         onClick={(e) => {
                             e.preventDefault();
+                            if (pswRef.current.value === '') {
+                                alert("Password cannot be blank");
+                                return;
+                            }
                             if (pswRef.current.value !== pswCRef.current.value) {
                                 alert("Passwords do not match.")
                                 return;
@@ -183,6 +219,9 @@ export default function Profile() {
                         className="btn bg-[#d1d1d1] hover:bg-[#aaaaaa] mt-2 ml-1 mr-1"
                     >Cancel</button>
                 </form>
+            </div>
+            <div className='mt-4'>
+                <button className='btn bg-[#ad1717] hover:bg-[#991717] text-[white]' onClick={deleteProfile}>Delete Account</button>
             </div>
         </div>
         {/* <PasswordConfirmationModal /> */} 
