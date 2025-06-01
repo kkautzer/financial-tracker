@@ -27,7 +27,7 @@ export default function BudgetModal({ modalId, transaction = {}, catData = {}, f
             const status = res.status;
             const data = await res.json();
             if (status === 200) {
-                alert("Successfully updated trnasaction");
+                alert("Successfully updated transaction");
                 forcePageUpdate();
             } else {
                 alert("Failed to update transaction - see console for more information.")

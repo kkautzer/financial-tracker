@@ -49,7 +49,6 @@ export default function Register(props) {
 
             if (status === 200 || status === 201) { // successful account creation, so send a login request immediately
                 emailRef.current.value='';
-                console.log(response.message);
                 fetch(`${API_BASE_URL}/login`, {
                     method: "POST",
                     credentials: "include",
@@ -65,7 +64,6 @@ export default function Register(props) {
                     let response = await res.json();
                     if (status === 200) {
                         // set user login data
-                        console.log(response.message);
                         sessionStorage.setItem('login', true);
                         setErrMsg('');
                         navigate('/app');

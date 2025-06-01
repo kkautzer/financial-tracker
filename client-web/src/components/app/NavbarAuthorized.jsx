@@ -19,11 +19,10 @@ export default function Navbar() {
                     </div>
                     <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 text-base-content rounded-box z-1 mt-3 w-52 p-2 shadow">
                         <li><NavLink to='/app/profile'>Profile</NavLink></li>
-                        <li><NavLink to='/app/settings'>Settings</NavLink></li>
+                        {/* <li><NavLink to='/app/settings'>Settings</NavLink></li> */}
                         <li><NavLink to='/app/logout'>Logout</NavLink></li>
                     </ul>
                 </div>
-                
             </ul>
         </div>
     </div>
